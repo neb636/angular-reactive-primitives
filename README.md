@@ -1,6 +1,7 @@
 # Angular Reactive Primitives
 
-A collection of small, reusable reactive primitives for modern Angular (v20+) applications. 
+A collection of small, reusable reactive primitives for modern Angular (v20+) applications. Currently these
+are not published and more of a scratch pad for you to copy and paste the ones you need into your applications.
 
 
 ### Composables
