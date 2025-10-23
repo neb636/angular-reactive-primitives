@@ -16,3 +16,4 @@ npm-debug.log
 /coverage
 .env
 .env.local
+.idea
