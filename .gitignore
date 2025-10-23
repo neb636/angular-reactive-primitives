@@ -1,0 +1,18 @@
+# System files
+.DS_Store
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+
+# Miscellaneous
+/.angular/cache
+/coverage
+.env
+.env.local
