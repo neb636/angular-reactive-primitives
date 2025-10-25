@@ -1,0 +1,73 @@
+/* Global styles for the reference app */
+:root {
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #22d3ee;
+  --accent-2: #a78bfa;
+  --border: #1f2937;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--text); }
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, rgba(34,211,238,0.1), rgba(167,139,250,0.1));
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin: 0 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+nav a.active { color: var(--text); background: #0b1220; border: 1px solid var(--border); }
+nav a:hover { color: var(--text); }
+
+main {
+  padding: 20px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+
+.card { background: #0b1220; border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; background: rgba(34,211,238,0.15); color: #67e8f9; border: 1px solid rgba(34,211,238,0.25); border-radius: 999px; font-size: 12px; }
+.btn { color: var(--bg); background: var(--accent); border: 0; padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.btn.secondary { background: var(--accent-2); color: #0b1220; }
+input, select { background: #0b1220; border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 8px; }

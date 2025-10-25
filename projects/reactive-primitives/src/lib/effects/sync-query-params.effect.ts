@@ -2,13 +2,13 @@ import { Signal, inject, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 export type QueryParamEffectOptions = {
-  queryParamsHandling?: 'merge' | 'preserve' | '';
+  queryParamsHandling?: 'merge' | 'preserve';
   replaceUrl?: boolean;
   skipLocationChange?: boolean;
 }
 
 export type SyncQueryParamsEffectConfig = {
-  queryParams: Signal<Record<string, any>>,
+  queryParams: Signal<Record<string, unknown>>,
   options?: QueryParamEffectOptions
 };
 

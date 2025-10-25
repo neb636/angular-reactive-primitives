@@ -13,6 +13,7 @@
     "experimentalDecorators": true,
     "paths": {
       "reactive-primitives": [
+        "./projects/reactive-primitives/src/public-api",
         "./dist/reactive-primitives"
       ]
     },
