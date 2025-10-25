@@ -1,5 +1,5 @@
 import { computed, inject, Signal } from '@angular/core';
-import { ActivatedRoute } from '@ce/platform-lib';
+import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 export const useQueryParameters = <T extends { [key: string]: undefined | string }>() => {
