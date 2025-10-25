@@ -5,38 +5,38 @@ are not published and more of a scratch pad for you to copy and paste the ones y
 
 ## Signal Transformations
 
-[useDebouncedSignal](composables/use-debounced-signal.composable.ts) - Creates a debounced signal from a source signal
+[useDebouncedSignal](projects/reactive-primitives/src/lib/composables/use-debounced-signal.composable.ts) - Creates a debounced signal from a source signal
 
-[useThrottledSignal](composables/use-throttled-signal.composable.ts) - Creates a throttled signal from a source signal
+[useThrottledSignal](projects/reactive-primitives/src/lib/composables/use-throttled-signal.composable.ts) - Creates a throttled signal from a source signal
 
-[usePreviousSignal](composables/use-previous-signal.composable.ts) - Tracks the previous value of a signal
+[usePreviousSignal](projects/reactive-primitives/src/lib/composables/use-previous-signal.composable.ts) - Tracks the previous value of a signal
 
 ## Browser APIs
 
-[useMediaQuery](composables/browser/use-media-query.composable.ts) - Tracks whether a media query matches
+[useMediaQuery](projects/reactive-primitives/src/lib/composables/browser/use-media-query.composable.ts) - Tracks whether a media query matches
 
-[useWindowSize](composables/browser/use-window-size.composable.ts) - Tracks window dimensions with resize events
+[useWindowSize](projects/reactive-primitives/src/lib/composables/browser/use-window-size.composable.ts) - Tracks window dimensions with resize events
 
-[useDocumentVisibility](composables/browser/use-document-visibility.composable.ts) - Tracks whether the document/tab is visible
+[useDocumentVisibility](projects/reactive-primitives/src/lib/composables/browser/use-document-visibility.composable.ts) - Tracks whether the document/tab is visible
 
 ## Routing
 
-[useQueryParameters](composables/activated-route/use-query-parameters.composable.ts) - Get all query parameters as a signal
+[useQueryParameters](projects/reactive-primitives/src/lib/composables/activated-route/use-query-parameters.composable.ts) - Get all query parameters as a signal
 
-[useQueryParameter](composables/activated-route/use-query-parameters.composable.ts) - Get a single query parameter as a signal
+[useQueryParameter](projects/reactive-primitives/src/lib/composables/activated-route/use-query-parameters.composable.ts) - Get a single query parameter as a signal
 
-[useParameters](composables/activated-route/use-parameters.composable.ts) - Get all route parameters as a signal
+[useParameters](projects/reactive-primitives/src/lib/composables/activated-route/use-parameters.composable.ts) - Get all route parameters as a signal
 
-[useParameter](composables/activated-route/use-parameters.composable.ts) - Get a single route parameter as a signal
+[useParameter](projects/reactive-primitives/src/lib/composables/activated-route/use-parameters.composable.ts) - Get a single route parameter as a signal
 
-[useRouteFragment](composables/activated-route/use-route-fragment.composable.ts) - Get the route fragment as a signal
+[useRouteFragment](projects/reactive-primitives/src/lib/composables/activated-route/use-route-fragment.composable.ts) - Get the route fragment as a signal
 
-[useRouteData](composables/activated-route/use-route-data.composable.ts) - Get route data as a signal
+[useRouteData](projects/reactive-primitives/src/lib/composables/activated-route/use-route-data.composable.ts) - Get route data as a signal
 
 ## Effects
 
-[syncQueryParamsEffect](effects/sync-query-params.effect.ts) - Syncs query params with application state
+[syncQueryParamsEffect](projects/reactive-primitives/src/lib/effects/sync-query-params.effect.ts) - Syncs query params with application state
 
-[syncLocalStorageEffect](effects/sync-local-storage.effect.ts) - One-way sync from signal to localStorage
+[syncLocalStorageEffect](projects/reactive-primitives/src/lib/effects/sync-local-storage.effect.ts) - One-way sync from signal to localStorage
 
-[logChangesEffect](effects/log-changes.effect.ts) - Development helper to log signal changes
+[logChangesEffect](projects/reactive-primitives/src/lib/effects/log-changes.effect.ts) - Development helper to log signal changes
