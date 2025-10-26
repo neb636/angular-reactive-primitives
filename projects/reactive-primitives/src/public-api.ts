@@ -18,3 +18,6 @@ export * from './lib/composables/use-throttled-signal.composable';
 export * from './lib/effects/sync-query-params.effect';
 export * from './lib/effects/sync-local-storage.effect';
 export * from './lib/effects/log-changes.effect';
+
+// Utils
+export * from './lib/utils/create-singleton-composable';
