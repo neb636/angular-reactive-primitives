@@ -31,7 +31,7 @@ You are build a util like library for Angular apps using composables/effects/gua
 ## When working in projects/reference-app follow the additional guidelines below:
 
 - Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default.
+- Skip setting standalone in components, directives, and pipes
 - Use signals for state management
 - Implement lazy loading for feature routes
 - Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
@@ -53,3 +53,10 @@ You are build a util like library for Angular apps using composables/effects/gua
 - Keep templates simple and avoid complex logic
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
 - Use the async pipe to handle observables
+- Only use TS readonly in component/services when it is uppercase like MY_CONSTANT
+
+Follow this format for components
+
+/component-name
+  /component-name.component.ts
+  /component-name.component.css

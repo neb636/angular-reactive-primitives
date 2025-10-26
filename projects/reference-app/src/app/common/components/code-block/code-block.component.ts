@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
-  selector: 'app-code-block',
-  // standalone is default in Angular 17+/20+, do not set explicitly
+  selector: 'code-block',
   template: `
     <div class="code-block">
       <div class="code-header">

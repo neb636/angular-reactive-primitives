@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocPageComponent } from '../doc-page.component';
+import { DocPageComponent } from '../../common/layout/documentation-fomat/doc-page.component';
 
 @Component({
   selector: 'app-use-debounced-signal-page',
   imports: [DocPageComponent],
   template: `
-    <app-doc-page
+    <documentation-format
       title="useDebouncedSignal"
       description="Creates a debounced signal from a source signal. Useful for things like search inputs where you want to debounce the input value before making an API call."
       overview="The useDebouncedSignal composable creates a new signal that updates with a delay after the source signal changes. This is particularly useful for search inputs, API calls, or any scenario where you want to reduce the frequency of updates."

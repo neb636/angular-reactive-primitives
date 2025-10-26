@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CodeBlockComponent } from '../../components/code-block.component';
+import { CodeBlockComponent } from '../../common/components/code-block/code-block.component';
 
 @Component({
   selector: 'app-install-page',
@@ -17,15 +17,15 @@ import { CodeBlockComponent } from '../../components/code-block.component';
           <h2>Installation</h2>
           <p>Install the package using your preferred package manager:</p>
 
-          <app-code-block
+          <code-block
             title="Install Package"
             [code]="'npm install @angular/reactive-primitives'"
           />
-          <app-code-block
+          <code-block
             title="Install Package"
             [code]="'yarn add @angular/reactive-primitives'"
           />
-          <app-code-block
+          <code-block
             title="Install Package"
             [code]="'pnpm add @angular/reactive-primitives'"
           />
@@ -34,7 +34,7 @@ import { CodeBlockComponent } from '../../components/code-block.component';
         <div class="doc-section">
           <h2>Basic Usage</h2>
           <p>Import and use the utilities in your components:</p>
-          <app-code-block title="Basic Usage" [code]="basicUsageCode" />
+          <code-block title="Basic Usage" [code]="basicUsageCode" />
         </div>
 
         <div class="doc-section">

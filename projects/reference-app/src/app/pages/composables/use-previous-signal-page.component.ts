@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocPageComponent } from '../doc-page.component';
+import { DocPageComponent } from '../../common/layout/documentation-fomat/doc-page.component';
 
 @Component({
   selector: 'app-use-previous-signal-page',
   imports: [DocPageComponent],
   template: `
-    <app-doc-page
+    <documentation-format
       title="usePreviousSignal"
       description="Creates a signal that holds the previous value of a source signal. Useful for tracking changes and implementing undo functionality."
       overview="The usePreviousSignal composable creates a signal that always contains the previous value of the source signal. This is particularly useful for implementing undo functionality, change detection, or any scenario where you need to compare current and previous values."

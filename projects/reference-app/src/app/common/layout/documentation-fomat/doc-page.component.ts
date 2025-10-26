@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CodeBlockComponent } from '../components/code-block.component';
+import { CodeBlockComponent } from '../../components/code-block/code-block.component';
 
 @Component({
-  selector: 'app-doc-page',
+  selector: 'documentation-format',
   imports: [CodeBlockComponent],
   template: `
     <div class="doc-page">
@@ -44,14 +44,14 @@ import { CodeBlockComponent } from '../components/code-block.component';
         @if (sourceCode()) {
           <div class="doc-section">
             <h2>Source Code</h2>
-            <app-code-block [title]="title() + ' Source'" [code]="sourceCode()" />
+            <code-block [title]="title() + ' Source'" [code]="sourceCode()" />
           </div>
         }
 
         @if (exampleCode()) {
           <div class="doc-section">
             <h2>Example Usage</h2>
-            <app-code-block title="Example Usage" [code]="exampleCode()" />
+            <code-block title="Example Usage" [code]="exampleCode()" />
           </div>
         }
       </div>
@@ -61,13 +61,13 @@ import { CodeBlockComponent } from '../components/code-block.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocPageComponent {
-  readonly title = input.required<string>();
-  readonly description = input.required<string>();
-  readonly overview = input<string | undefined>();
-  readonly parameters = input<
+  title = input.required<string>();
+  description = input.required<string>();
+  overview = input<string | undefined>();
+  parameters = input<
     Array<{ name: string; type: string; description: string }> | undefined
   >();
-  readonly returns = input<string | undefined>();
-  readonly sourceCode = input<string | undefined>();
-  readonly exampleCode = input<string | undefined>();
+  returns = input<string | undefined>();
+  sourceCode = input<string | undefined>();
+  exampleCode = input<string | undefined>();
 }

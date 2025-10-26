@@ -17,33 +17,3 @@
   margin: 0 0 48px 0;
   line-height: 1.6;
 }
-
-.doc-section {
-  margin-bottom: 48px;
-}
-
-.doc-section h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #374151;
-  margin: 0 0 16px 0;
-}
-
-.doc-section p {
-  font-size: 16px;
-  color: #6b7280;
-  margin: 0 0 16px 0;
-  line-height: 1.6;
-}
-
-.doc-section ul {
-  margin: 0;
-  padding-left: 24px;
-}
-
-.doc-section li {
-  font-size: 16px;
-  color: #6b7280;
-  margin-bottom: 8px;
-  line-height: 1.6;
-}

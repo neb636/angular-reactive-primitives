@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocPageComponent } from '../doc-page.component';
+import { DocPageComponent } from '../../common/layout/documentation-fomat/doc-page.component';
 
 @Component({
   selector: 'app-sync-local-storage-page',
   imports: [DocPageComponent],
   template: `
-    <app-doc-page
+    <documentation-format
       title="syncLocalStorage"
       description="Effect that syncs a signal to localStorage (one-way: signal → storage). This is useful when you want to persist signal changes but don't need two-way sync."
       overview="The syncLocalStorage effect automatically saves signal values to localStorage whenever they change. This provides a simple way to persist application state without the complexity of two-way synchronization."
