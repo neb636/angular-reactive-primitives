@@ -1,4 +1,8 @@
 /* Global styles for the documentation site */
+
+/* Highlight.js theme for syntax highlighting */
+@import 'highlight.js/styles/atom-one-light.css';
+
 :root {
   --primary: #8b5cf6;
   --primary-dark: #7c3aed;
