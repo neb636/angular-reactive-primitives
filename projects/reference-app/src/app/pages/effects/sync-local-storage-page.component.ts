@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../doc-page.component';
 
 @Component({
   selector: 'app-sync-local-storage-page',
-  standalone: true,
   imports: [DocPageComponent],
   template: `
     <app-doc-page
@@ -15,7 +14,8 @@ import { DocPageComponent } from '../doc-page.component';
       [sourceCode]="sourceCode"
       [exampleCode]="exampleCode"
     />
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncLocalStoragePageComponent {
   parameters = [

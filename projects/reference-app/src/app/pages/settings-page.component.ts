@@ -1,15 +1,14 @@
-import { Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { syncLocalStorageEffect } from 'reactive-primitives';
 
 @Component({
-  standalone: true,
   selector: 'app-settings-page',
   template: `
-    <div class="panel" style="max-width: 720px;">
-      <h2 style="margin: 0 0 12px 0">Settings</h2>
+    <div class="panel max-720">
+      <h2 class="title">Settings</h2>
 
-      <div style="display: grid; gap: 12px; grid-template-columns: 1fr 1fr;">
-        <label class="card" style="display:flex; align-items:center; justify-content: space-between;">
+      <div class="grid-two">
+        <label class="card row-space">
           <span>Theme</span>
           <select [value]="theme()" (change)="onThemeChange($event)">
             <option value="system">System</option>
@@ -18,18 +17,20 @@ import { syncLocalStorageEffect } from 'reactive-primitives';
           </select>
         </label>
 
-        <label class="card" style="display:flex; align-items:center; justify-content: space-between;">
+        <label class="card row-space">
           <span>Compact mode</span>
           <input type="checkbox" [checked]="compact()" (change)="onCompactChange($event)" />
         </label>
       </div>
 
-      <div class="card" style="margin-top: 12px;">
+      <div class="card mt-12">
         <div class="badge">Preview</div>
-        <pre style="white-space: pre-wrap; margin: 8px 0 0 0;">{{ settingsJson() }}</pre>
+        <pre class="pre">{{ settingsJson() }}</pre>
       </div>
     </div>
   `,
+  styleUrls: ['./settings-page.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent {
   readonly theme = signal<'system' | 'dark' | 'light'>('system');
