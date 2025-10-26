@@ -1,19 +1,47 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocPageComponent } from '../../common/layout/documentation-fomat/doc-page.component';
+import { DocumentationComponent } from '../../common/layout/documentation/documentation.component';
+import { DocumentationSectionComponent } from '../../common/layout/documentation-section/documentation-section.component';
+import { ParametersComponent } from '../../common/components/parameters/parameters.component';
+import { CodeBlockComponent } from '../../common/components/code-block/code-block.component';
 
 @Component({
-  selector: 'app-use-debounced-signal-page',
-  imports: [DocPageComponent],
+  selector: 'use-debounced-signal-page',
+  imports: [
+    DocumentationComponent,
+    DocumentationSectionComponent,
+    ParametersComponent,
+    CodeBlockComponent,
+  ],
   template: `
-    <documentation-format
-      title="useDebouncedSignal"
-      description="Creates a debounced signal from a source signal. Useful for things like search inputs where you want to debounce the input value before making an API call."
-      overview="The useDebouncedSignal composable creates a new signal that updates with a delay after the source signal changes. This is particularly useful for search inputs, API calls, or any scenario where you want to reduce the frequency of updates."
-      [parameters]="parameters"
-      returns="A readonly signal that updates with the debounced value"
-      [sourceCode]="sourceCode"
-      [exampleCode]="exampleCode"
-    />
+    <documentation>
+      <ng-container documentation-title>useDebouncedSignal</ng-container>
+
+      <ng-container documentation-description
+        >Creates a debounced signal from a source signal. Useful for things like search inputs where
+        you want to debounce the input value before making an API call.</ng-container
+      >
+
+      <documentation-section>
+        <ng-container section-title>Overview</ng-container>
+        <p>
+          The useDebouncedSignal composable creates a new signal that updates with a delay after the
+          source signal changes. This is particularly useful for search inputs, API calls, or any
+          scenario where you want to reduce the frequency of updates.
+        </p>
+      </documentation-section>
+
+      <parameters [parameters]="parameters"></parameters>
+
+      <documentation-section>
+        <ng-container section-title>Source Code</ng-container>
+        <code-block [title]="'useDebouncedSignal Source'" [code]="sourceCode" />
+      </documentation-section>
+
+      <documentation-section>
+        <ng-container section-title>Example Usage</ng-container>
+        <code-block title="Example Usage" [code]="exampleCode" />
+      </documentation-section>
+    </documentation>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -67,7 +95,7 @@ export function useDebouncedSignal<T>(sourceSignal: Signal<T>, delayMs: number =
 import { useDebouncedSignal } from '@angular/reactive-primitives';
 
 @Component({
-  selector: 'app-search',
+  selector: 'search',
   template: \`
     <input [(ngModel)]="searchInput" placeholder="Search..." />
     <div *ngIf="isSearching">Searching...</div>

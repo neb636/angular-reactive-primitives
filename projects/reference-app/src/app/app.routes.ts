@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { IntroductionPageComponent } from './pages/getting-started/introduction-page.component';
-import { InstallPageComponent } from './pages/getting-started/install-page.component';
+import { IntroductionPageComponent } from './pages/getting-started/introduction-page/introduction-page.component';
+import { InstallPageComponent } from './pages/getting-started/install-page/install-page.component';
 import { UseDebouncedSignalPageComponent } from './pages/composables/use-debounced-signal-page.component';
 import { UsePreviousSignalPageComponent } from './pages/composables/use-previous-signal-page.component';
 import { SyncLocalStoragePageComponent } from './pages/effects/sync-local-storage-page.component';

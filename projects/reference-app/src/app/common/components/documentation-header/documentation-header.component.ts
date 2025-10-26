@@ -12,7 +12,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
       <div class="header-right">
         <a href="https://github.com/neb636/angular-reactive-primitives">
-          <svg width="98" height="96" xmlns="http://www.w3.org/2000/svg">
+          <svg xmlns="http://www.w3.org/2000/svg">
             <path
               fill-rule="evenodd"
               clip-rule="evenodd"

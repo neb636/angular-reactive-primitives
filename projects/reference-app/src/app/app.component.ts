@@ -4,14 +4,14 @@ import { NavigationSidebarComponent } from './common/components/navigation-sideb
 import { DocumentationHeaderComponent } from './common/components/documentation-header/documentation-header.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 'root',
   imports: [RouterOutlet, DocumentationHeaderComponent, NavigationSidebarComponent],
   template: `
     <div class="app-root">
       <documentation-header />
 
       <div class="app-root__body">
-        <app-doc-sidebar />
+        <navigation-sidebar />
 
         <main class="app-root__page-content">
           <router-outlet />

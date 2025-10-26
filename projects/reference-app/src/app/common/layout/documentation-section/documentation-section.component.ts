@@ -1,14 +1,14 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  standalone: true,
   selector: 'documentation-section',
-  styleUrls: ['./documentation-section.component.scss'],
+  styleUrls: ['./documentation-section.component.css'],
   imports: [CommonModule],
-  template: `<h2 class="documentation-section__heading">{{ heading() }}</h2>
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<h2 class="documentation-section__heading">
+      <ng-content select="[section-title]"></ng-content>
+    </h2>
     <ng-content></ng-content>`,
 })
-export class DocumentationSectionComponent {
-  heading = input('');
-}
+export class DocumentationSectionComponent {}
