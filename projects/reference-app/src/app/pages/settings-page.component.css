@@ -1,0 +1,51 @@
+.panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.max-720 {
+  max-width: 720px;
+}
+
+.title {
+  margin: 0 0 12px 0;
+}
+
+.grid-two {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.row-space {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mt-12 {
+  margin-top: 12px;
+}
+
+.badge {
+  display: inline-block;
+  background: #e5e7eb;
+  color: #374151;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+}
+
+.pre {
+  white-space: pre-wrap;
+  margin: 8px 0 0 0;
+}
