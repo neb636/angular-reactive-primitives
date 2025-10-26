@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DocumentationSectionComponent } from '../../layout/documentation-section/documentation-section.component';
 
@@ -6,6 +6,7 @@ import { DocumentationSectionComponent } from '../../layout/documentation-sectio
   selector: 'parameters',
   styleUrls: ['./parameters.component.css'],
   imports: [CommonModule, DocumentationSectionComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<documentation-section>
     <ng-container section-title>Parameters</ng-container>
     <div class="param-list">

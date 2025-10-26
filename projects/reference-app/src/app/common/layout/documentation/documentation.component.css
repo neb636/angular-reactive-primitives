@@ -1,9 +1,32 @@
-.doc-page {
-  padding: 48px;
-  max-width: 800px;
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: 48px 60px;
+  max-width: 1000px;
+
+  ::ng-deep {
+    p {
+      font-size: 16px;
+      color: #6b7280;
+      margin: 0 0 16px 0;
+      line-height: 1.6;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    li {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+  }
 }
 
-.doc-title {
+.documentation__heading {
   font-size: 48px;
   font-weight: 700;
   color: #1a1a1a;
@@ -11,65 +34,9 @@
   line-height: 1.1;
 }
 
-.doc-description {
+.documentation__description {
   font-size: 20px;
   color: #6b7280;
   margin: 0 0 48px 0;
   line-height: 1.6;
-}
-
-.doc-section {
-  margin-bottom: 48px;
-}
-
-.doc-section h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #374151;
-  margin: 0 0 16px 0;
-}
-
-.doc-section p {
-  font-size: 16px;
-  color: #6b7280;
-  margin: 0 0 16px 0;
-  line-height: 1.6;
-}
-
-.param-list {
-  /* spacing managed by child margins */
-}
-
-.param-item {
-  margin-bottom: 16px;
-}
-
-.param-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.param-name code {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.param-type {
-  background: #f3f4f6;
-  color: #6b7280;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.param-description {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
-  line-height: 1.5;
 }

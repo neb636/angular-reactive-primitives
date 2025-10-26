@@ -5,8 +5,7 @@ import { UseDebouncedSignalPageComponent } from './pages/composables/use-debounc
 import { UsePreviousSignalPageComponent } from './pages/composables/use-previous-signal-page.component';
 import { SyncLocalStoragePageComponent } from './pages/effects/sync-local-storage-page.component';
 
-export const appRoutes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'introduction' },
+const gettingStartedRoutes: Routes = [
   {
     path: 'introduction',
     component: IntroductionPageComponent,
@@ -17,20 +16,45 @@ export const appRoutes: Routes = [
     component: InstallPageComponent,
     title: 'Install • Angular Reactive Primitives',
   },
+];
+
+const composablesRoutes: Routes = [
   {
-    path: 'composables/use-debounced-signal',
+    path: 'activated-route',
+    children: [],
+  },
+  {
+    path: 'browser',
+    children: [],
+  },
+  {
+    path: 'use-debounced-signal',
     component: UseDebouncedSignalPageComponent,
     title: 'useDebouncedSignal • Angular Reactive Primitives',
   },
   {
-    path: 'composables/use-previous-signal',
+    path: 'use-previous-signal',
     component: UsePreviousSignalPageComponent,
     title: 'usePreviousSignal • Angular Reactive Primitives',
   },
+];
+
+const effectsRoutes: Routes = [
   {
-    path: 'effects/sync-local-storage',
+    path: 'sync-local-storage',
     component: SyncLocalStoragePageComponent,
     title: 'syncLocalStorage • Angular Reactive Primitives',
   },
-  { path: '**', redirectTo: 'introduction' },
+];
+
+export const NAVIGATION_ROUTES: Routes = [
+  { path: 'getting-started', children: gettingStartedRoutes },
+  { path: 'composables', children: composablesRoutes },
+  { path: 'effects', children: effectsRoutes },
+];
+
+export const appRoutes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'getting-started/introduction' },
+  ...NAVIGATION_ROUTES,
+  { path: '**', redirectTo: 'getting-started/introduction' },
 ];

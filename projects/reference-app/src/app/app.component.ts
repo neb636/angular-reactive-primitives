@@ -4,7 +4,7 @@ import { NavigationSidebarComponent } from './common/components/navigation-sideb
 import { DocumentationHeaderComponent } from './common/components/documentation-header/documentation-header.component';
 
 @Component({
-  selector: 'root',
+  selector: 'app-root',
   imports: [RouterOutlet, DocumentationHeaderComponent, NavigationSidebarComponent],
   template: `
     <div class="app-root">
