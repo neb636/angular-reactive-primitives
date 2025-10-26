@@ -22,7 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export function useMediaQuery(query: string): Signal<boolean> {
   const document = inject(DOCUMENT);
   const destroyRef = inject(DestroyRef);
-  
+
   if (!document.defaultView) {
     throw new Error('Window is not available');
   }

@@ -7,10 +7,30 @@ import { SyncLocalStoragePageComponent } from './pages/effects/sync-local-storag
 
 export const appRoutes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'introduction' },
-  { path: 'introduction', component: IntroductionPageComponent, title: 'Introduction • Angular Reactive Primitives' },
-  { path: 'install', component: InstallPageComponent, title: 'Install • Angular Reactive Primitives' },
-  { path: 'composables/use-debounced-signal', component: UseDebouncedSignalPageComponent, title: 'useDebouncedSignal • Angular Reactive Primitives' },
-  { path: 'composables/use-previous-signal', component: UsePreviousSignalPageComponent, title: 'usePreviousSignal • Angular Reactive Primitives' },
-  { path: 'effects/sync-local-storage', component: SyncLocalStoragePageComponent, title: 'syncLocalStorage • Angular Reactive Primitives' },
+  {
+    path: 'introduction',
+    component: IntroductionPageComponent,
+    title: 'Introduction • Angular Reactive Primitives',
+  },
+  {
+    path: 'install',
+    component: InstallPageComponent,
+    title: 'Install • Angular Reactive Primitives',
+  },
+  {
+    path: 'composables/use-debounced-signal',
+    component: UseDebouncedSignalPageComponent,
+    title: 'useDebouncedSignal • Angular Reactive Primitives',
+  },
+  {
+    path: 'composables/use-previous-signal',
+    component: UsePreviousSignalPageComponent,
+    title: 'usePreviousSignal • Angular Reactive Primitives',
+  },
+  {
+    path: 'effects/sync-local-storage',
+    component: SyncLocalStoragePageComponent,
+    title: 'syncLocalStorage • Angular Reactive Primitives',
+  },
   { path: '**', redirectTo: 'introduction' },
 ];

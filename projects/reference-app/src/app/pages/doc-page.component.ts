@@ -64,7 +64,9 @@ export class DocPageComponent {
   readonly title = input.required<string>();
   readonly description = input.required<string>();
   readonly overview = input<string | undefined>();
-  readonly parameters = input<Array<{ name: string; type: string; description: string }> | undefined>();
+  readonly parameters = input<
+    Array<{ name: string; type: string; description: string }> | undefined
+  >();
   readonly returns = input<string | undefined>();
   readonly sourceCode = input<string | undefined>();
   readonly exampleCode = input<string | undefined>();

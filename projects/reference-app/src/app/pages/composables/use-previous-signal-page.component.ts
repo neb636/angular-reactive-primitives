@@ -22,8 +22,8 @@ export class UsePreviousSignalPageComponent {
     {
       name: 'sourceSignal',
       type: 'Signal<T>',
-      description: 'The source signal to track the previous value of'
-    }
+      description: 'The source signal to track the previous value of',
+    },
   ];
 
   sourceCode = `import { Signal, effect, signal } from '@angular/core';
@@ -81,4 +81,3 @@ export class FormComponent {
   }
 }`;
 }
-

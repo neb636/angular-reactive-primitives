@@ -22,23 +22,23 @@ export class SyncLocalStoragePageComponent {
     {
       name: 'config',
       type: 'SyncLocalStorageEffectConfig',
-      description: 'Configuration object for the effect'
+      description: 'Configuration object for the effect',
     },
     {
       name: 'config.signal',
       type: 'Signal<any>',
-      description: 'Signal to sync to localStorage'
+      description: 'Signal to sync to localStorage',
     },
     {
       name: 'config.key',
       type: 'string',
-      description: 'localStorage key to sync to'
+      description: 'localStorage key to sync to',
     },
     {
       name: 'config.serialize',
       type: '(value: any) => string',
-      description: 'Optional custom serialization function (defaults to JSON.stringify)'
-    }
+      description: 'Optional custom serialization function (defaults to JSON.stringify)',
+    },
   ];
 
   sourceCode = `import { Signal, effect, inject } from '@angular/core';
@@ -139,4 +139,3 @@ export class SettingsComponent {
   }
 }`;
 }
-

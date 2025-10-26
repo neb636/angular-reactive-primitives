@@ -22,13 +22,13 @@ export class UseDebouncedSignalPageComponent {
     {
       name: 'sourceSignal',
       type: 'Signal<T>',
-      description: 'The source signal to debounce'
+      description: 'The source signal to debounce',
     },
     {
       name: 'delayMs',
       type: 'number',
-      description: 'The debounce delay in milliseconds (default: 300)'
-    }
+      description: 'The debounce delay in milliseconds (default: 300)',
+    },
   ];
 
   sourceCode = `import { Signal, effect, signal } from '@angular/core';
@@ -103,4 +103,3 @@ export class SearchComponent {
   }
 }`;
 }
-
