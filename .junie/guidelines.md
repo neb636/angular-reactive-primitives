@@ -27,3 +27,36 @@ You are an expert in TypeScript and frontend UI frameworks, including Angular. Y
 ## This library
 
 You are build a util like library for Angular apps using composables/effects/guards in small bit sized functions
+
+## When working in projects/reference-app follow the additional guidelines below:
+
+- Always use standalone components over NgModules
+- Skip setting standalone in components, directives, and pipes
+- Use signals for state management
+- Implement lazy loading for feature routes
+- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
+- Use `NgOptimizedImage` for all static images.
+- `NgOptimizedImage` does not work for inline base64 images.
+- When making api requests use resource function instead of `HttpClient`
+- Keep components small and focused on a single responsibility
+- Use `input()` and `output()` functions instead of decorators
+- Use `computed()` for derived state
+- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
+- Prefer inline templates for small components
+- Prefer Reactive forms instead of Template-driven ones
+- Do NOT use `ngClass`, use `class` bindings instead
+- Do NOT use `ngStyle`, use `style` bindings instead
+- Use signals for local component state
+- Use `computed()` for derived state
+- Keep state transformations pure and predictable
+- Do NOT use `mutate` on signals, use `update` or `set` instead
+- Keep templates simple and avoid complex logic
+- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
+- Use the async pipe to handle observables
+- Only use TS readonly in component/services when it is uppercase like MY_CONSTANT
+
+Follow this format for components
+
+/component-name
+  /component-name.component.ts
+  /component-name.component.css

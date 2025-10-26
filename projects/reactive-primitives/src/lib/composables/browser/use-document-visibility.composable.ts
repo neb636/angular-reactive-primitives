@@ -19,7 +19,7 @@ import { DOCUMENT } from '@angular/common';
 export function useDocumentVisibility(): Signal<boolean> {
   const document = inject(DOCUMENT);
   const destroyRef = inject(DestroyRef);
-  
+
   if (!document.defaultView) {
     throw new Error('Window is not available');
   }

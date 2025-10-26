@@ -1,0 +1,33 @@
+
+
+:host {
+    margin-bottom: 48px;
+
+    ::ng-deep {
+        p {
+            font-size: 16px;
+            color: #6b7280;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: 24px;
+        }
+
+        li {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+    }
+}
+
+.documentation-section__heading {
+    font-size: 24px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 16px 0;
+}

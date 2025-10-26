@@ -5,11 +5,11 @@ export type QueryParamEffectOptions = {
   queryParamsHandling?: 'merge' | 'preserve';
   replaceUrl?: boolean;
   skipLocationChange?: boolean;
-}
+};
 
 export type SyncQueryParamsEffectConfig = {
-  queryParams: Signal<Record<string, unknown>>,
-  options?: QueryParamEffectOptions
+  queryParams: Signal<Record<string, unknown>>;
+  options?: QueryParamEffectOptions;
 };
 
 /**
@@ -40,7 +40,11 @@ export const syncQueryParamsEffect = (config: SyncQueryParamsEffectConfig) => {
   const activatedRoute = inject(ActivatedRoute);
   const router = inject(Router);
 
-  const { queryParamsHandling = 'merge', skipLocationChange = false, replaceUrl = false } = config.options || {}
+  const {
+    queryParamsHandling = 'merge',
+    skipLocationChange = false,
+    replaceUrl = false,
+  } = config.options || {};
 
   return effect(() => {
     const queryParams = config.queryParams();
@@ -50,7 +54,7 @@ export const syncQueryParamsEffect = (config: SyncQueryParamsEffectConfig) => {
       queryParams,
       queryParamsHandling,
       skipLocationChange,
-      replaceUrl
+      replaceUrl,
     });
-  })
-}
+  });
+};

@@ -1,44 +1,72 @@
-import { Component } from '@angular/core';
-import { DocPageComponent } from '../doc-page.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { DocumentationComponent } from '../../common/layout/documentation/documentation.component';
+import { DocumentationSectionComponent } from '../../common/layout/documentation-section/documentation-section.component';
+import { ParametersComponent } from '../../common/components/parameters/parameters.component';
+import { CodeBlockComponent } from '../../common/components/code-block/code-block.component';
 
 @Component({
-  selector: 'app-sync-local-storage-page',
-  standalone: true,
-  imports: [DocPageComponent],
+  selector: 'sync-local-storage-page',
+  imports: [
+    DocumentationComponent,
+    DocumentationSectionComponent,
+    ParametersComponent,
+    CodeBlockComponent,
+  ],
   template: `
-    <app-doc-page
-      title="syncLocalStorage"
-      description="Effect that syncs a signal to localStorage (one-way: signal → storage). This is useful when you want to persist signal changes but don't need two-way sync."
-      overview="The syncLocalStorage effect automatically saves signal values to localStorage whenever they change. This provides a simple way to persist application state without the complexity of two-way synchronization."
-      [parameters]="parameters"
-      returns="void"
-      [sourceCode]="sourceCode"
-      [exampleCode]="exampleCode"
-    />
-  `
+    <documentation>
+      <ng-container documentation-title>syncLocalStorageEffect</ng-container>
+
+      <ng-container documentation-description>
+        >Effect that syncs a signal to localStorage (one-way: signal → storage). This is useful when
+        you want to persist signal changes but don't need two-way sync.
+      </ng-container>
+
+      <documentation-section>
+        <ng-container section-title>Overview</ng-container>
+        <p>
+          The syncLocalStorage effect automatically saves signal values to localStorage whenever
+          they change. This provides a simple way to persist application state without the
+          complexity of two-way synchronization.
+        </p>
+      </documentation-section>
+
+      <parameters [parameters]="parameters"></parameters>
+
+      <documentation-section>
+        <ng-container section-title>Source Code</ng-container>
+        <code-block [title]="'syncLocalStorage Effect Source'" [code]="sourceCode" />
+      </documentation-section>
+
+      <documentation-section>
+        <ng-container section-title>Example Usage</ng-container>
+        <code-block title="Example Usage" [code]="exampleCode" />
+      </documentation-section>
+    </documentation>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncLocalStoragePageComponent {
   parameters = [
     {
       name: 'config',
       type: 'SyncLocalStorageEffectConfig',
-      description: 'Configuration object for the effect'
+      description: 'Configuration object for the effect',
     },
     {
       name: 'config.signal',
       type: 'Signal<any>',
-      description: 'Signal to sync to localStorage'
+      description: 'Signal to sync to localStorage',
     },
     {
       name: 'config.key',
       type: 'string',
-      description: 'localStorage key to sync to'
+      description: 'localStorage key to sync to',
     },
     {
       name: 'config.serialize',
       type: '(value: any) => string',
-      description: 'Optional custom serialization function (defaults to JSON.stringify)'
-    }
+      description: 'Optional custom serialization function (defaults to JSON.stringify)',
+    },
   ];
 
   sourceCode = `import { Signal, effect, inject } from '@angular/core';
@@ -99,7 +127,7 @@ export const syncLocalStorageEffect = (config: SyncLocalStorageEffectConfig) => 
 import { syncLocalStorageEffect } from '@angular/reactive-primitives';
 
 @Component({
-  selector: 'app-settings',
+  selector: 'settings',
   template: \`
     <div>
       <label>
@@ -128,15 +156,14 @@ export class SettingsComponent {
     // Sync theme to localStorage
     syncLocalStorageEffect({
       signal: this.theme,
-      key: 'app-theme'
+      key: 'theme'
     });
 
     // Sync language to localStorage
     syncLocalStorageEffect({
       signal: this.language,
-      key: 'app-language'
+      key: 'language'
     });
   }
 }`;
 }
-

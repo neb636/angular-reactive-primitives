@@ -25,14 +25,14 @@ export type WindowSize = {
 export function useWindowSize(debounceMs: number = 100): Signal<WindowSize> {
   const document = inject(DOCUMENT);
   const destroyRef = inject(DestroyRef);
-  
+
   if (!document.defaultView) {
     throw new Error('Window is not available');
   }
 
   const getWindowSize = (): WindowSize => ({
     width: document.defaultView!.innerWidth,
-    height: document.defaultView!.innerHeight
+    height: document.defaultView!.innerHeight,
   });
 
   const windowSizeSignal = signal<WindowSize>(getWindowSize());

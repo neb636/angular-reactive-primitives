@@ -34,7 +34,7 @@ export type SyncLocalStorageEffectConfig = {
 export const syncLocalStorageEffect = (config: SyncLocalStorageEffectConfig) => {
   const document = inject(DOCUMENT);
   const storage = document.defaultView?.localStorage;
-  
+
   if (!storage) {
     console.warn('localStorage is not available');
     return;

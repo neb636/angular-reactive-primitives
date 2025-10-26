@@ -43,7 +43,7 @@ export const logChangesEffect = (config: LogChangesEffectConfig) => {
   return effect(() => {
     const value = signal();
     const timestamp = new Date().toISOString();
-    
+
     console[logLevel](`[${timestamp}] ${label}:`, value);
   });
 };

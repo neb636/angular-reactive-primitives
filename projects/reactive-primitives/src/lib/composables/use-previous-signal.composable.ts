@@ -22,12 +22,12 @@ export function usePreviousSignal<T>(sourceSignal: Signal<T>): Signal<T | undefi
 
   return computed(() => {
     const currentValue = sourceSignal();
-    
+
     if (currentValue !== lastValue) {
       previousSignal.set(lastValue);
       lastValue = currentValue;
     }
-    
+
     return previousSignal();
   });
 }

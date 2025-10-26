@@ -6,7 +6,12 @@ export const useParameters = <T extends { [key: string]: undefined | string }>()
   const route = inject(ActivatedRoute);
   const paramMapSignal = toSignal(route.paramMap, { initialValue: route.snapshot.paramMap });
 
-  return computed(() => paramMapSignal().keys.reduce((params, key) => ({ ...params, [key]: paramMapSignal().get(key) }), {} as T));
+  return computed(() =>
+    paramMapSignal().keys.reduce(
+      (params, key) => ({ ...params, [key]: paramMapSignal().get(key) }),
+      {} as T,
+    ),
+  );
 };
 
 export const useParameter = <T extends undefined | string>(paramName: string) => {
