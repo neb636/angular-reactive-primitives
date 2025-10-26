@@ -1,0 +1,10 @@
+.nav-subtitle {
+  cursor: pointer;
+  user-select: none;
+}
+
+.expand-icon {
+  margin-left: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
