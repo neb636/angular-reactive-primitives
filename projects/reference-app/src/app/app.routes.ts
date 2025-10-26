@@ -47,10 +47,16 @@ const effectsRoutes: Routes = [
   },
 ];
 
+const utilsRoutes: Routes = [];
+
 export const NAVIGATION_ROUTES: Routes = [
   { path: 'getting-started', children: gettingStartedRoutes },
   { path: 'composables', children: composablesRoutes },
   { path: 'effects', children: effectsRoutes },
+  {
+    path: 'utils',
+    children: utilsRoutes,
+  },
 ];
 
 export const appRoutes: Routes = [
