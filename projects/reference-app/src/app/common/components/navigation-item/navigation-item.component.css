@@ -1,10 +1,38 @@
 .nav-subtitle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px 10px 36px;
+  background: none;
+  border: none;
   cursor: pointer;
-  user-select: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+  text-align: left;
 }
 
-.expand-icon {
-  margin-left: 4px;
-  font-size: 12px;
-  font-weight: bold;
+.nav-subtitle:hover {
+  background: #f9fafb;
+  color: #1f2937;
+}
+
+.nav-subtitle-text {
+  flex: 1;
+}
+
+.chevron-icon {
+  color: #6b7280;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.chevron-icon.expanded {
+  transform: rotate(0deg);
+}
+
+.chevron-icon:not(.expanded) {
+  transform: rotate(-90deg);
 }

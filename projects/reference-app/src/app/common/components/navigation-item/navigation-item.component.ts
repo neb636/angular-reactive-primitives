@@ -7,7 +7,7 @@ import { Route } from '@angular/router';
   imports: [RouterLink, RouterLinkActive],
   template: `
     @if (!hasChildren()) {
-      <li>
+      <div>
         <a
           [routerLink]="fullPath()"
           routerLinkActive="active"
@@ -15,24 +15,37 @@ import { Route } from '@angular/router';
         >
           {{ label() }}
         </a>
-      </li>
+      </div>
     } @else {
-      <li class="nav-subsection">
-        <span class="nav-subtitle" (click)="toggleChildren()">
-          {{ label() }}
-          <span class="expand-icon">{{ expandIcon() }}</span>
-        </span>
+      <div class="nav-subsection">
+        <button class="nav-subtitle" (click)="toggleChildren()" type="button">
+          <span class="nav-subtitle-text">{{ label() }}</span>
+          <svg
+            class="chevron-icon"
+            [class.expanded]="childrenOpen()"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 6L8 10L12 6"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
         @if (childrenOpen()) {
-          <ul class="nav-sublist">
+          <div class="nav-sublist">
             @for (child of route().children; track child.path) {
-              <navigation-item
-                [route]="child"
-                [basePath]="fullPath()"
-              ></navigation-item>
+              <navigation-item [route]="child" [basePath]="fullPath()"></navigation-item>
             }
-          </ul>
+          </div>
         }
-      </li>
+      </div>
     }
   `,
   styleUrls: ['./navigation-item.component.css'],
@@ -56,18 +69,14 @@ export class NavigationItemComponent {
   });
 
   label = computed(() => {
-    return this.route().title as string || this.route().path || '';
+    return (this.route().title as string) || this.route().path || '';
   });
 
   exactMatch = computed(() => {
     return this.fullPath() === '';
   });
 
-  expandIcon = computed(() => {
-    return this.childrenOpen() ? '−' : '+';
-  });
-
   toggleChildren() {
-    this.childrenOpen.update(open => !open);
+    this.childrenOpen.update((open) => !open);
   }
 }
