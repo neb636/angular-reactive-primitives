@@ -1,8 +1,9 @@
 :host {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-start;
   padding: 48px 60px;
-  max-width: 1000px;
 
   ::ng-deep {
     p {
@@ -26,6 +27,16 @@
   }
 }
 
+.documentation {
+  width: 100%;
+  max-width: 900px;
+  margin-right: 35px;
+}
+
+.documentation__header {
+  margin-bottom: 48px;
+}
+
 .documentation__heading {
   font-size: 48px;
   font-weight: 700;
@@ -37,6 +48,22 @@
 .documentation__description {
   font-size: 20px;
   color: #6b7280;
-  margin: 0 0 48px 0;
+  margin: 0;
   line-height: 1.6;
+}
+
+.documentation__layout {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 60px;
+  align-items: start;
+}
+
+.documentation__content {
+  min-width: 0;
+  max-width: 800px;
+}
+
+.documentation__sidebar {
+  position: relative;
 }

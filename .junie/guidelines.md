@@ -54,9 +54,38 @@ You are build a util like library for Angular apps using composables/effects/gua
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
 - Use the async pipe to handle observables
 - Only use TS readonly in component/services when it is uppercase like MY_CONSTANT
+- Skip using `private` for components/directives as they have no public consumers. Use `private` only in services where there are public consumers.
 
-Follow this format for components
+### CSS naming
 
-/component-name
-  /component-name.component.ts
-  /component-name.component.css
+- Follow component name scope BEM style for css selectors. component name movie-card => class="movie-card\_\_title" => class="movie-card--is-selected"
+
+
+### Creating New Angular Components
+
+When creating new components follow this format with the provided file templates.
+
+{folderLocation}/{kebab-case-componentName}
+  /{kebab-case-componentName}.component.ts
+  /{kebab-case-componentName}.component.css
+
+```{kebab-case-componentName.component.ts}
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: '{kebab-case-componentName}',
+  styleUrls: ['./{kebab-case-componentName}.component.css'],
+  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div class="{kebab-case-componentName}"></div>`,
+})
+export class {PascalCase-ComponentName}Component {}
+```
+
+### Styles (`{kebab-case}.component.css`)
+
+```css
+:host {
+}
+```

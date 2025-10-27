@@ -7,44 +7,27 @@ import { Route } from '@angular/router';
   imports: [RouterLink, RouterLinkActive],
   template: `
     @if (!hasChildren()) {
-      <div>
-        <a
-          [routerLink]="fullPath()"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: exactMatch() }"
-        >
-          {{ label() }}
-        </a>
-      </div>
+      <a
+        class="navigation-item__leaf"
+        [class.navigation-item--is-active]="rla.isActive"
+        [routerLink]="fullPath()"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [routerLinkActiveOptions]="{ exact: exactMatch() }"
+      >
+        {{ label() }}
+      </a>
     } @else {
-      <div class="nav-subsection">
-        <button class="nav-subtitle" (click)="toggleChildren()" type="button">
-          <span class="nav-subtitle-text">{{ label() }}</span>
-          <svg
-            class="chevron-icon"
-            [class.expanded]="childrenOpen()"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4 6L8 10L12 6"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+      <div class="navigation-item__subsection">
+        <button class="navigation-item__subtitle" (click)="toggleChildren()" type="button">
+          <span class="navigation-item__subtitle-text">{{ label() }}</span>
         </button>
-        @if (childrenOpen()) {
-          <div class="nav-sublist">
-            @for (child of route().children; track child.path) {
-              <navigation-item [route]="child" [basePath]="fullPath()"></navigation-item>
-            }
-          </div>
-        }
+
+        <div class="navigation-item__sublist">
+          @for (child of route().children; track child.path) {
+            <navigation-item [route]="child" [basePath]="fullPath()"></navigation-item>
+          }
+        </div>
       </div>
     }
   `,
@@ -54,6 +37,7 @@ import { Route } from '@angular/router';
 export class NavigationItemComponent {
   route = input.required<Route>();
   basePath = input<string>('');
+  depth = input<number>(0);
 
   childrenOpen = signal(false);
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,4 +11,6 @@ import { CommonModule } from '@angular/common';
     </h2>
     <ng-content></ng-content>`,
 })
-export class DocumentationSectionComponent {}
+export class DocumentationSectionComponent {
+  constructor(public elementRef: ElementRef<HTMLElement>) {}
+}

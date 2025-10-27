@@ -32,6 +32,7 @@ const GETTING_STARTED_ROUTES: Routes = [
 const COMPOSABLE_ROUTES: Routes = [
   {
     path: 'activated-route',
+    title: 'Activated Route',
     children: [
       {
         path: 'use-parameters',
@@ -57,6 +58,7 @@ const COMPOSABLE_ROUTES: Routes = [
   },
   {
     path: 'browser',
+    title: 'Browser',
     children: [
       {
         path: 'use-document-visibility',
@@ -77,6 +79,7 @@ const COMPOSABLE_ROUTES: Routes = [
   },
   {
     path: 'general',
+    title: 'General',
     children: [
       {
         path: 'use-debounced-signal',
@@ -124,10 +127,10 @@ const UTIL_ROUTES: Routes = [
 ];
 
 export const NAVIGATION_ROUTES: Routes = [
-  { path: 'getting-started', children: GETTING_STARTED_ROUTES },
-  { path: 'composables', children: COMPOSABLE_ROUTES },
-  { path: 'effects', children: EFFECT_ROUTES },
-  { path: 'utils', children: UTIL_ROUTES },
+  { path: 'getting-started', title: 'Getting Started', children: GETTING_STARTED_ROUTES },
+  { path: 'composables', title: 'Composables', children: COMPOSABLE_ROUTES },
+  { path: 'effects', title: 'Effects', children: EFFECT_ROUTES },
+  { path: 'utils', title: 'Utils', children: UTIL_ROUTES },
 ];
 
 export const appRoutes: Routes = [
