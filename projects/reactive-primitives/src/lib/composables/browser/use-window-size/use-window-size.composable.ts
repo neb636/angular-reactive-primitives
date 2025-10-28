@@ -1,7 +1,7 @@
 import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { useDebouncedSignal } from '../use-debounced-signal.composable';
-import { createSharedComposable } from '../../utils/create-shared-composable';
+import { useDebouncedSignal } from '../../use-debounced-signal/use-debounced-signal.composable';
+import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
 
 export type WindowSize = {
   width: number;

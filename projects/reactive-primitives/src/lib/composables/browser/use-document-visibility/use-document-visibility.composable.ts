@@ -1,6 +1,6 @@
 import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { createSharedComposable } from '../../utils/create-shared-composable';
+import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
 
 /*
  * Creates a signal that tracks whether the document/tab is visible or hidden.

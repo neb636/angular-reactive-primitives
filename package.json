@@ -8,7 +8,9 @@
     "build:reference-app": "ng build reference-app",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint reference-app && ng lint reactive-primitives"
+    "lint": "ng lint reference-app && ng lint reactive-primitives",
+    "docs:dev": "ng serve reference-app",
+    "docs:build": "ng build reference-app --configuration=production"
   },
   "prettier": {
     "printWidth": 100,

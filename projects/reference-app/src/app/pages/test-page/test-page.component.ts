@@ -29,10 +29,6 @@ import {
     </section>
 
     <section>
-      <p>Document visibility: {{ documentVisibility() }}</p>
-    </section>
-
-    <section>
       <tab-group>
         <tab label="CLI">npx shadcn-ui@latest add button</tab>
         <tab label="Interface">npm install @shadcn/ui-button</tab>
