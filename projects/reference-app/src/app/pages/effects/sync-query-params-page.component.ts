@@ -17,21 +17,9 @@ import { CodeBlockComponent } from '../../common/components/code-block/code-bloc
       <ng-container documentation-title>syncQueryParamsEffect</ng-container>
 
       <ng-container documentation-description
-        >Effect to sync query parameters with application state. Automatically updates the URL when your signal-based state changes.</ng-container
+        >Effect to sync query parameters with application state. Automatically updates the URL when
+        your signal-based state changes.</ng-container
       >
-
-      <documentation-section>
-        <ng-container section-title>Overview</ng-container>
-        <p>
-          The syncQueryParamsEffect creates an effect that synchronizes your application's signal-based
-          state with the URL query parameters. Whenever the provided signal changes, the URL is updated
-          to reflect the new state.
-        </p>
-        <p>
-          This is particularly useful for making your application's state shareable via URL, enabling
-          deep linking, preserving filter/search states, and allowing users to bookmark specific views.
-        </p>
-      </documentation-section>
 
       <parameters [parameters]="parameters"></parameters>
 
@@ -63,7 +51,8 @@ export class SyncQueryParamsPageComponent {
     {
       name: 'config.options.replaceUrl',
       type: 'boolean',
-      description: 'Whether to replace the current URL instead of pushing a new history entry (default: false)',
+      description:
+        'Whether to replace the current URL instead of pushing a new history entry (default: false)',
     },
     {
       name: 'config.options.skipLocationChange',

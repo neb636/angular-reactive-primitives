@@ -1,5 +1,6 @@
 import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { createSharedComposable } from '../../utils/create-shared-composable';
 
 /*
  * Creates a signal that tracks whether the document/tab is visible or hidden.
@@ -16,27 +17,25 @@ import { DOCUMENT } from '@angular/common';
  *   <div>Tab is hidden</div>
  * }
  */
-export function useDocumentVisibility(): Signal<boolean> {
+export const useDocumentVisibility = createSharedComposable(() => {
   const document = inject(DOCUMENT);
-  const destroyRef = inject(DestroyRef);
-
-  if (!document.defaultView) {
-    throw new Error('Window is not available');
-  }
 
   const visibilitySignal = signal<boolean>(!document.hidden);
-
-  const handleVisibilityChange = () => {
-    visibilitySignal.set(!document.hidden);
-  };
+  const handleVisibilityChange = () => visibilitySignal.set(!document.hidden);
 
   // Listen for visibility change events
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  document.defaultView?.addEventListener(
+    'visibilitychange',
+    handleVisibilityChange,
+  );
 
-  // Cleanup listener on destroy
-  destroyRef.onDestroy(() => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-  });
-
-  return visibilitySignal.asReadonly();
-}
+  return {
+    value: visibilitySignal.asReadonly(),
+    cleanup: () => {
+      document.defaultView?.removeEventListener(
+        'visibilitychange',
+        handleVisibilityChange,
+      );
+    },
+  };
+});

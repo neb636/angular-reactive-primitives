@@ -1,6 +1,5 @@
 # Project Guidelines
 
-
 You are an expert in TypeScript and frontend UI frameworks, including Angular. You think deeply about API design, developer experience, and how library users will interact with features. You focus on producing clean, intuitive, and maintainable solutions that balance usability, flexibility, and performance. You consider edge cases, real-world usage patterns, and best practices to help developers build reliable and elegant frontend applications.
 
 ## General
@@ -22,70 +21,8 @@ You are an expert in TypeScript and frontend UI frameworks, including Angular. Y
 ## Angular
 
 - This library is for modern Angular (20+) using reactive/functional approaches
-- - Use modern reactive Angular with Composables and Effects
+- Use modern reactive Angular with Composables and Effects
 
 ## This library
 
 You are build a util like library for Angular apps using composables/effects/guards in small bit sized functions
-
-## When working in projects/reference-app follow the additional guidelines below:
-
-- Always use standalone components over NgModules
-- Skip setting standalone in components, directives, and pipes
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-- `NgOptimizedImage` does not work for inline base64 images.
-- When making api requests use resource function instead of `HttpClient`
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-- Only use TS readonly in component/services when it is uppercase like MY_CONSTANT
-- Skip using `private` for components/directives as they have no public consumers. Use `private` only in services where there are public consumers.
-
-### CSS naming
-
-- Follow component name scope BEM style for css selectors. component name movie-card => class="movie-card\_\_title" => class="movie-card--is-selected"
-
-
-### Creating New Angular Components
-
-When creating new components follow this format with the provided file templates.
-
-{folderLocation}/{kebab-case-componentName}
-  /{kebab-case-componentName}.component.ts
-  /{kebab-case-componentName}.component.css
-
-```{kebab-case-componentName.component.ts}
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: '{kebab-case-componentName}',
-  styleUrls: ['./{kebab-case-componentName}.component.css'],
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div class="{kebab-case-componentName}"></div>`,
-})
-export class {PascalCase-ComponentName}Component {}
-```
-
-### Styles (`{kebab-case}.component.css`)
-
-```css
-:host {
-}
-```

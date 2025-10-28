@@ -17,22 +17,9 @@ import { CodeBlockComponent } from '../../common/components/code-block/code-bloc
       <ng-container documentation-title>logChangesEffect</ng-container>
 
       <ng-container documentation-description
-        >Development helper effect that logs signal changes to the console. Useful for debugging and understanding signal behavior during development.</ng-container
+        >Development helper effect that logs signal changes to the console. Useful for debugging and
+        understanding signal behavior during development.</ng-container
       >
-
-      <documentation-section>
-        <ng-container section-title>Overview</ng-container>
-        <p>
-          The logChangesEffect creates an effect that automatically logs whenever a signal's value changes.
-          This is a development utility that helps you track signal mutations, understand when and why
-          values are changing, and debug reactive flows in your application.
-        </p>
-        <p>
-          Each log entry includes a timestamp, a custom label, and the current value of the signal.
-          You can customize the console method used (log, warn, error, info) to categorize different
-          types of changes.
-        </p>
-      </documentation-section>
 
       <parameters [parameters]="parameters"></parameters>
 

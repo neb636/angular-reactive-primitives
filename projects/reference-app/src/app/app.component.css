@@ -5,13 +5,11 @@
   background: #f8f9fa;
 }
 
-
 .app-root__body {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
-
 
 .app-root__page-content {
   flex: 1;

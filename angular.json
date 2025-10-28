@@ -26,6 +26,12 @@
           "options": {
             "tsConfig": "projects/reactive-primitives/tsconfig.spec.json"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/reactive-primitives/**/*.ts"]
+          }
         }
       }
     },
@@ -42,12 +48,8 @@
             "outputPath": "dist/reference-app",
             "index": "projects/reference-app/src/index.html",
             "browser": "projects/reference-app/src/main.ts",
-            "assets": [
-              "projects/reference-app/src/assets"
-            ],
-            "styles": [
-              "projects/reference-app/src/styles.css"
-            ],
+            "assets": ["projects/reference-app/src/assets"],
+            "styles": ["projects/reference-app/src/styles.css"],
             "inlineStyleLanguage": "css"
           },
           "configurations": {
@@ -70,6 +72,15 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/reference-app/**/*.ts",
+              "projects/reference-app/**/*.html"
+            ]
+          }
         }
       }
     }

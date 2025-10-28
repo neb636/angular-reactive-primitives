@@ -37,7 +37,7 @@ hljs.registerLanguage('shell', bash);
           </svg>
         </button>
       </div>
-      <pre><code [innerHTML]="highlightedCode()"></code></pre>
+      <pre><code class="hljs" [innerHTML]="highlightedCode()"></code></pre>
     </div>
   `,
   styleUrls: ['./code-block.component.css'],

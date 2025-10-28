@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { NAVIGATION_ROUTES } from '../../../app.routes';
 import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav-menu.component';
 
@@ -31,10 +31,18 @@ import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav
             stroke-linejoin="round"
           />
         </svg>
-        <input type="text" placeholder="Search anything..." class="search-input" />
+        <input
+          type="text"
+          placeholder="Search anything..."
+          class="search-input"
+        />
       </div>
 
-      <expandable-nav-menu [sections]="NAVIGATION_ROUTES"></expandable-nav-menu>
+      <nav class="navigation-sidebar__menu-container">
+        @for (section of NAVIGATION_ROUTES; track section.path) {
+          <expandable-nav-menu [section]="section"></expandable-nav-menu>
+        }
+      </nav>
     </aside>
   `,
   styleUrls: ['./navigation-sidebar.component.css'],

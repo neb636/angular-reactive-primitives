@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Route } from '@angular/router';
 
@@ -8,7 +14,7 @@ import { Route } from '@angular/router';
   template: `
     @if (!hasChildren()) {
       <a
-        class="navigation-item__leaf"
+        class="navigation-item__leaf navigation-item--depth-{{ depth() }}"
         [class.navigation-item--is-active]="rla.isActive"
         [routerLink]="fullPath()"
         routerLinkActive
@@ -19,13 +25,21 @@ import { Route } from '@angular/router';
       </a>
     } @else {
       <div class="navigation-item__subsection">
-        <button class="navigation-item__subtitle" (click)="toggleChildren()" type="button">
+        <div
+          class="navigation-item__subtitle"
+          (click)="toggleChildren()"
+          type="button"
+        >
           <span class="navigation-item__subtitle-text">{{ label() }}</span>
-        </button>
+        </div>
 
         <div class="navigation-item__sublist">
           @for (child of route().children; track child.path) {
-            <navigation-item [route]="child" [basePath]="fullPath()"></navigation-item>
+            <navigation-item
+              [route]="child"
+              [basePath]="fullPath()"
+              [depth]="depth() + 1"
+            ></navigation-item>
           }
         </div>
       </div>
@@ -37,7 +51,7 @@ import { Route } from '@angular/router';
 export class NavigationItemComponent {
   route = input.required<Route>();
   basePath = input<string>('');
-  depth = input<number>(0);
+  depth = input<number>(1);
 
   childrenOpen = signal(false);
 

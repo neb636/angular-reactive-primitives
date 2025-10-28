@@ -21,15 +21,6 @@ import { CodeBlockComponent } from '../../common/components/code-block/code-bloc
         you want to persist signal changes but don't need two-way sync.
       </ng-container>
 
-      <documentation-section>
-        <ng-container section-title>Overview</ng-container>
-        <p>
-          The syncLocalStorage effect automatically saves signal values to localStorage whenever
-          they change. This provides a simple way to persist application state without the
-          complexity of two-way synchronization.
-        </p>
-      </documentation-section>
-
       <parameters [parameters]="parameters"></parameters>
 
       <documentation-section>

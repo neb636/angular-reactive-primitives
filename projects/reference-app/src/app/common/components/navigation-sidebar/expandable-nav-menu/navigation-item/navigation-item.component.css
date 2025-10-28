@@ -8,12 +8,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px 12px 40px;
+  padding: 12px 20px 12px 35px;
   background: none;
   border: none;
-  cursor: pointer;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   color: #6b7280;
   transition: all 0.2s;
   text-align: left;
@@ -21,7 +20,6 @@
 
 .navigation-item__sublist {
   width: 100%;
-  padding-left: 20px;
 }
 
 a.navigation-item__leaf {
@@ -31,18 +29,23 @@ a.navigation-item__leaf {
   font-size: 15px;
 }
 
+a.navigation-item__leaf.navigation-item--depth-2 {
+  padding-left: 55px;
+}
+
+a.navigation-item__leaf:hover {
+  background: #f9fafb;
+  color: #1f2937;
+}
+
 a.navigation-item__leaf-link {
   color: #6b7280;
 }
 
-a.navigation-item__leaf-link.navigation-item--is-active {
+a.navigation-item__leaf.navigation-item--is-active {
   color: var(--primary-dark);
+  font-weight: 500;
   background-color: #fafafc;
-}
-
-.navigation-item__subtitle:hover {
-  background: #f9fafb;
-  color: #1f2937;
 }
 
 .navigation-item__subtitle-text {
@@ -61,4 +64,8 @@ a.navigation-item__leaf-link.navigation-item--is-active {
 
 .navigation-item__chevron-icon:not(.navigation-item__chevron-icon--expanded) {
   transform: rotate(-90deg);
+}
+
+.navigation-item__subsection {
+  width: 100%;
 }

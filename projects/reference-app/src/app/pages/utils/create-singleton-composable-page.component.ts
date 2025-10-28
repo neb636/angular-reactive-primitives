@@ -17,25 +17,10 @@ import { CodeBlockComponent } from '../../common/components/code-block/code-bloc
       <ng-container documentation-title>createSingletonComposable</ng-container>
 
       <ng-container documentation-description
-        >Creates a singleton composable that only executes once per root injector. Perfect for shared signals, event listeners, or any stateful logic that should be shared across multiple component instances.</ng-container
+        >Creates a singleton composable that only executes once per root injector. Perfect for
+        shared signals, event listeners, or any stateful logic that should be shared across multiple
+        component instances.</ng-container
       >
-
-      <documentation-section>
-        <ng-container section-title>Overview</ng-container>
-        <p>
-          The createSingletonComposable utility wraps a factory function to ensure it executes only once
-          per application (root injector). This is useful when you want to create shared state or resources
-          that should be the same instance across all components that use it.
-        </p>
-        <p>
-          Unlike regular composables that create a new instance each time they're called, a singleton
-          composable caches its result and returns the same instance on subsequent calls. This is perfect
-          for global event listeners, shared signals, or expensive operations that should only happen once.
-        </p>
-        <p>
-          The implementation uses a WeakMap to ensure proper garbage collection when the injector is destroyed.
-        </p>
-      </documentation-section>
 
       <parameters [parameters]="parameters"></parameters>
 
@@ -57,7 +42,8 @@ export class CreateSingletonComposablePageComponent {
     {
       name: 'factory',
       type: '() => T',
-      description: 'A factory function that creates the singleton value. This function will only execute once per injector.',
+      description:
+        'A factory function that creates the singleton value. This function will only execute once per injector.',
     },
   ];
 

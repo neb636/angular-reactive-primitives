@@ -15,6 +15,7 @@ import { SyncLocalStoragePageComponent } from './pages/effects/sync-local-storag
 import { SyncQueryParamsPageComponent } from './pages/effects/sync-query-params-page.component';
 import { LogChangesPageComponent } from './pages/effects/log-changes-page.component';
 import { CreateSingletonComposablePageComponent } from './pages/utils/create-singleton-composable-page.component';
+import { TestPageComponent } from './pages/test-page/test-page.component';
 
 const GETTING_STARTED_ROUTES: Routes = [
   {
@@ -127,7 +128,11 @@ const UTIL_ROUTES: Routes = [
 ];
 
 export const NAVIGATION_ROUTES: Routes = [
-  { path: 'getting-started', title: 'Getting Started', children: GETTING_STARTED_ROUTES },
+  {
+    path: 'getting-started',
+    title: 'Getting Started',
+    children: GETTING_STARTED_ROUTES,
+  },
   { path: 'composables', title: 'Composables', children: COMPOSABLE_ROUTES },
   { path: 'effects', title: 'Effects', children: EFFECT_ROUTES },
   { path: 'utils', title: 'Utils', children: UTIL_ROUTES },
@@ -136,5 +141,6 @@ export const NAVIGATION_ROUTES: Routes = [
 export const appRoutes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'getting-started/introduction' },
   ...NAVIGATION_ROUTES,
+  { path: 'test', title: 'Test', component: TestPageComponent },
   { path: '**', redirectTo: 'getting-started/introduction' },
 ];

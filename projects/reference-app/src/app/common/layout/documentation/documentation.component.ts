@@ -29,10 +29,8 @@ import {
         </p>
       </div>
 
-      <div class="documentation__layout">
-        <div class="documentation__content">
-          <ng-content></ng-content>
-        </div>
+      <div class="documentation__content">
+        <ng-content></ng-content>
       </div>
     </div>
 

@@ -1,6 +1,7 @@
 import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { useDebouncedSignal } from '../use-debounced-signal.composable';
+import { createSharedComposable } from '../../utils/create-shared-composable';
 
 export type WindowSize = {
   width: number;
@@ -17,38 +18,28 @@ export type WindowSize = {
  *
  * const windowSize = useWindowSize();
  * const { width, height } = windowSize();
- *
- * // Or get individual dimensions
- * const width = useWindowSize().width;
- * const height = useWindowSize().height;
  */
-export function useWindowSize(debounceMs: number = 100): Signal<WindowSize> {
-  const document = inject(DOCUMENT);
-  const destroyRef = inject(DestroyRef);
+export const useWindowSize = createSharedComposable(
+  (debounceMs: number = 100) => {
+    const document = inject(DOCUMENT);
 
-  if (!document.defaultView) {
-    throw new Error('Window is not available');
-  }
+    const getWindowSize = (): WindowSize => ({
+      width: document.defaultView!.innerWidth,
+      height: document.defaultView!.innerHeight,
+    });
 
-  const getWindowSize = (): WindowSize => ({
-    width: document.defaultView!.innerWidth,
-    height: document.defaultView!.innerHeight,
-  });
+    const windowSizeSignal = signal<WindowSize>(getWindowSize());
+    const handleResize = () => windowSizeSignal.set(getWindowSize());
 
-  const windowSizeSignal = signal<WindowSize>(getWindowSize());
+    // Listen for resize events
+    document.defaultView?.addEventListener('resize', handleResize);
 
-  const handleResize = () => {
-    windowSizeSignal.set(getWindowSize());
-  };
-
-  // Listen for resize events
-  document.defaultView.addEventListener('resize', handleResize);
-
-  // Cleanup listener on destroy
-  destroyRef.onDestroy(() => {
-    document.defaultView?.removeEventListener('resize', handleResize);
-  });
-
-  // Debounce the signal to prevent excessive updates
-  return useDebouncedSignal(windowSizeSignal, debounceMs);
-}
+    // Debounce the signal to prevent excessive updates
+    return {
+      value: useDebouncedSignal(windowSizeSignal, debounceMs),
+      cleanup: () => {
+        document.defaultView?.removeEventListener('resize', handleResize);
+      },
+    };
+  },
+);

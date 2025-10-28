@@ -2,10 +2,10 @@
   width: 320px;
   background: white;
   border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
   padding: 0;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .sidebar-header {
@@ -109,4 +109,12 @@
 .nav-sublist a {
   padding-left: 52px;
   font-size: 14px;
+}
+
+.navigation-sidebar__menu-container {
+  border-top: 1px solid #e5e7eb;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0;
+  flex: 1;
 }
