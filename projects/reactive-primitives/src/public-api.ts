@@ -10,7 +10,6 @@ export * from './lib/composables/activated-route/use-route-fragment/use-route-fr
 
 // Browser Composables
 export * from './lib/composables/browser/use-document-visibility/use-document-visibility.composable';
-export * from './lib/composables/browser/use-media-query/use-media-query.composable';
 export * from './lib/composables/browser/use-window-size/use-window-size.composable';
 export * from './lib/composables/browser/use-mouse-position/use-mouse-position.composable';
 

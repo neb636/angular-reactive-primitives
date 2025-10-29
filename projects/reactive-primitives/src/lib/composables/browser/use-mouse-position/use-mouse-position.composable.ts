@@ -1,12 +1,9 @@
-import { Signal, signal, inject, DestroyRef } from '@angular/core';
+import { signal, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { useThrottledSignal } from '../../general/use-throttled-signal/use-throttled-signal.composable';
 import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
 
-export type MousePosition = {
-  x: number;
-  y: number;
-};
+export type MousePosition = { x: number; y: number };
 
 /*
  * Creates signals that track the mouse position (x and y coordinates). The signals update

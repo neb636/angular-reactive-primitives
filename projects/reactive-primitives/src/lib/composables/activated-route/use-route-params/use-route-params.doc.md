@@ -4,44 +4,12 @@ A convenience function that wraps Angular's ActivatedRoute.params, exposing all 
 
 ## Usage
 
-### Resource Fetching Example
-
-```ts
-import { Component, inject } from '@angular/core';
-import { resource } from '@angular/core';
-import { useRouteParams } from 'angular-reactive-primitives';
-
-// Route: /blog/:slug/:commentId
-@Component({
-  /* ... */
-})
-export class BlogPostComponent {
-  blogService = inject(BlogService);
-
-  params = useRouteParams<{
-    slug: string;
-    commentId?: string;
-    somethingElse: string;
-  }>();
-
-  postResource = resource({
-    params: () => ({
-      slug: this.params().slug,
-      highlightComment: this.params().commentId,
-    }),
-    loader: ({ params, abortSignal }) =>
-      this.blogService.fetchPost(params, { abortSignal }),
-  });
-}
-```
-
-### Reactive Computations
-
 ```ts
 import { Component, computed } from '@angular/core';
 import { useRouteParams } from 'angular-reactive-primitives';
 
 // Route: /products/:category/:productId
+
 @Component({
   selector: 'product-breadcrumb',
   template: `

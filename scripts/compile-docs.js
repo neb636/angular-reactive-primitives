@@ -236,7 +236,7 @@ function generateComponent(
       const varName = `code_${section.title.replace(/\s+/g, '_').toLowerCase()}_${i}`;
 
       templateSections += `
-        <code-block title="${escapeString(blockTitle)}" [code]="${varName}" />
+        <code-block [code]="${varName}" />
 `;
     }
 

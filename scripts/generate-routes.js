@@ -80,7 +80,10 @@ function getRouteTitle(fileName) {
  * Get import path for component
  */
 function getImportPath(relativePath) {
-  return `./pages/${relativePath.replace(/\\/g, '/')}`.replace('.ts', '');
+  return `./compiled-pages/${relativePath.replace(/\\/g, '/')}`.replace(
+    '.ts',
+    '',
+  );
 }
 
 /**
