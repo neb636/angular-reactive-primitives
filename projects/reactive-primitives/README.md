@@ -1,64 +1,31 @@
-# ReactivePrimitives
+# Reactive Primitives (Library)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.0.
+This package contains the source for the Angular reactive primitives library. It provides composables and effects built on signals to help implement common UI and routing patterns.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the library, run:
+## Build
 
 ```bash
 ng build reactive-primitives
 ```
 
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
+Build artifacts are output to `dist/reactive-primitives`.
 
-### Publishing the Library
+## Publish (optional)
 
-Once the project is built, you can publish your library by following these steps:
+After building, you can publish the library when ready:
 
-1. Navigate to the `dist` directory:
+```bash
+cd dist/reactive-primitives
+npm publish
+```
 
-   ```bash
-   cd dist/reactive-primitives
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Test
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Notes
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- This library targets modern Angular and embraces signals for state and derivations.
+- Keep APIs small and focused; prefer clear composition over heavy abstractions.

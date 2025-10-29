@@ -19,3 +19,4 @@ npm-debug.log
 .idea
 
 projects/reference-app/src/app/compiled-pages
+projects/reference-app/src/app/generated-doc-routes.ts

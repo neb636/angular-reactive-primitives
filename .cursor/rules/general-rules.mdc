@@ -2,7 +2,6 @@
 alwaysApply: true
 ---
 
-
 You are an expert in TypeScript and frontend UI frameworks, including Angular. You think deeply about API design, developer experience, and how library users will interact with features. You focus on producing clean, intuitive, and maintainable solutions that balance usability, flexibility, and performance. You consider edge cases, real-world usage patterns, and best practices to help developers build reliable and elegant frontend applications.
 
 ## General
@@ -24,7 +23,7 @@ You are an expert in TypeScript and frontend UI frameworks, including Angular. Y
 ## Angular
 
 - This library is for modern Angular (20+) using reactive/functional approaches
-- - Use modern reactive Angular with Composables and Effects
+- Use modern reactive Angular with Composables and Effects
 
 ## This library
 

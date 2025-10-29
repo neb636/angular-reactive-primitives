@@ -1,42 +1,91 @@
 # Angular Reactive Primitives
 
-A collection of small, reusable reactive primitives for modern Angular (v20+) applications. Currently these
-are not published and more of a scratch pad for you to copy and paste the ones you need into your applications.
+A collection of small, reusable reactive building blocks for modern Angular (v20+) applications. The focus is on simple, well-typed composables and effects built around signals that you can drop into real projects with minimal ceremony.
 
-## Signal Transformations
+## 🚀 Features
 
-[useDebouncedSignal](projects/reactive-primitives/src/lib/composables/use-debounced-signal.composable.ts) - Creates a debounced signal from a source signal
+- 🎪 [**Interactive docs & demos**](https://vueuse.org)
+- ⚡ **Fully tree shakeable**: Only take what you want,
+- 🦾 **Type Strong**: Written in [TypeScript](https://www.typescriptlang.org/), with [TS Docs](https://github.com/microsoft/tsdoc)
 
-[useThrottledSignal](projects/reactive-primitives/src/lib/composables/use-throttled-signal.composable.ts) - Creates a throttled signal from a source signal
+## What you can do
 
-[usePreviousSignal](projects/reactive-primitives/src/lib/composables/use-previous-signal.composable.ts) - Tracks the previous value of a signal
+- Transform signals: debounce, throttle, track previous values, and derive state.
+- Observe the browser environment: respond to media queries, window size changes, and document visibility.
+- Work with router state as signals: access route parameters, query parameters, fragments, and route data.
+- Synchronize side effects safely: keep URL query parameters and local storage in sync with application state, and log changes during development.
 
-## Browser APIs
+## Status
 
-[useMediaQuery](projects/reactive-primitives/src/lib/composables/browser/use-media-query.composable.ts) - Tracks whether a media query matches
+- Work in progress. The primitives are not published yet; treat this repository as a source of copy‑and‑paste utilities or consume the library locally.
 
-[useWindowSize](projects/reactive-primitives/src/lib/composables/browser/use-window-size.composable.ts) - Tracks window dimensions with resize events
+## Getting started
 
-[useDocumentVisibility](projects/reactive-primitives/src/lib/composables/browser/use-document-visibility.composable.ts) - Tracks whether the document/tab is visible
+- Install dependencies:
 
-## Routing
+```bash
+npm install
+```
 
-[useQueryParameters](projects/reactive-primitives/src/lib/composables/activated-route/use-query-parameters.composable.ts) - Get all query parameters as a signal
+- Run the Documentation site for live examples:
 
-[useQueryParameter](projects/reactive-primitives/src/lib/composables/activated-route/use-query-parameters.composable.ts) - Get a single query parameter as a signal
+```bash
+npm run start
+```
 
-[useParameters](projects/reactive-primitives/src/lib/composables/activated-route/use-parameters.composable.ts) - Get all route parameters as a signal
+- Build the library:
 
-[useParameter](projects/reactive-primitives/src/lib/composables/activated-route/use-parameters.composable.ts) - Get a single route parameter as a signal
+```bash
+npm run build
+```
 
-[useRouteFragment](projects/reactive-primitives/src/lib/composables/activated-route/use-route-fragment.composable.ts) - Get the route fragment as a signal
+- Run tests:
 
-[useRouteData](projects/reactive-primitives/src/lib/composables/activated-route/use-route-data.composable.ts) - Get route data as a signal
+```bash
+npm run test
+```
 
-## Effects
+- Develop documentation locally:
 
-[syncQueryParamsEffect](projects/reactive-primitives/src/lib/effects/sync-query-params.effect.ts) - Syncs query params with application state
+```bash
+npm run docs:dev
+```
 
-[syncLocalStorageEffect](projects/reactive-primitives/src/lib/effects/sync-local-storage.effect.ts) - One-way sync from signal to localStorage
+## Project structure
 
-[logChangesEffect](projects/reactive-primitives/src/lib/effects/log-changes.effect.ts) - Development helper to log signal changes
+- `projects/reactive-primitives` — library source and primitives
+- `projects/reference-app` — Documentation site
+- `scripts` — internal scripts used to compile docs and generate routes
+
+### Creating Documentation
+
+1. Create a `.doc.md` file next to your library source file:
+
+   ```
+   projects/reactive-primitives/src/lib/
+     composables/
+       my-feature/
+         my-feature.composable.ts
+         my-feature.doc.md       ← Create this
+   ```
+
+2. Write your documentation in markdown (see `DOC_TEMPLATE.md` for format)
+
+3. Run the build command:
+
+   ```bash
+   npm run build:docs
+   ```
+
+4. The system automatically:
+   - Compiles your `.doc.md` into a component in `projects/reference-app/src/app/pages/`
+   - Scans all generated components
+   - Generates route definitions in `generated-doc-routes.ts`
+
+## Compatibility
+
+- Angular 20+
+
+## License
+
+- MIT
