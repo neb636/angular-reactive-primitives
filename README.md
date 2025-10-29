@@ -1,42 +1,63 @@
 # Angular Reactive Primitives
 
-A collection of small, reusable reactive primitives for modern Angular (v20+) applications. Currently these
-are not published and more of a scratch pad for you to copy and paste the ones you need into your applications.
+A collection of small, reusable reactive building blocks for modern Angular (v20+) applications. The focus is on simple, well-typed composables and effects built around signals that you can drop into real projects with minimal ceremony.
 
-## Signal Transformations
+## What you can do
 
-[useDebouncedSignal](projects/reactive-primitives/src/lib/composables/use-debounced-signal.composable.ts) - Creates a debounced signal from a source signal
+- Transform signals: debounce, throttle, track previous values, and derive state.
+- Observe the browser environment: respond to media queries, window size changes, and document visibility.
+- Work with router state as signals: access route parameters, query parameters, fragments, and route data.
+- Synchronize side effects safely: keep URL query parameters and local storage in sync with application state, and log changes during development.
 
-[useThrottledSignal](projects/reactive-primitives/src/lib/composables/use-throttled-signal.composable.ts) - Creates a throttled signal from a source signal
+## Status
 
-[usePreviousSignal](projects/reactive-primitives/src/lib/composables/use-previous-signal.composable.ts) - Tracks the previous value of a signal
+- Work in progress. The primitives are not published yet; treat this repository as a source of copy‑and‑paste utilities or consume the library locally.
 
-## Browser APIs
+## Getting started
 
-[useMediaQuery](projects/reactive-primitives/src/lib/composables/browser/use-media-query.composable.ts) - Tracks whether a media query matches
+- Install dependencies:
+```bash
+npm install
+```
 
-[useWindowSize](projects/reactive-primitives/src/lib/composables/browser/use-window-size.composable.ts) - Tracks window dimensions with resize events
+- Run the reference app for live examples:
+```bash
+npm run start
+```
 
-[useDocumentVisibility](projects/reactive-primitives/src/lib/composables/browser/use-document-visibility.composable.ts) - Tracks whether the document/tab is visible
+- Build the library:
+```bash
+npm run build
+```
 
-## Routing
+- Run tests:
+```bash
+npm run test
+```
 
-[useQueryParameters](projects/reactive-primitives/src/lib/composables/activated-route/use-query-parameters.composable.ts) - Get all query parameters as a signal
+- Develop documentation locally:
+```bash
+npm run docs:dev
+```
 
-[useQueryParameter](projects/reactive-primitives/src/lib/composables/activated-route/use-query-parameters.composable.ts) - Get a single query parameter as a signal
+## Design guidelines
 
-[useParameters](projects/reactive-primitives/src/lib/composables/activated-route/use-parameters.composable.ts) - Get all route parameters as a signal
+- Signals first: prefer `signal()` and `computed()` for state and derivations.
+- Small, focused APIs with clear responsibilities.
+- OnPush change detection and simple, predictable state transformations.
 
-[useParameter](projects/reactive-primitives/src/lib/composables/activated-route/use-parameters.composable.ts) - Get a single route parameter as a signal
+## Project structure
 
-[useRouteFragment](projects/reactive-primitives/src/lib/composables/activated-route/use-route-fragment.composable.ts) - Get the route fragment as a signal
+- `projects/reactive-primitives` — library source and primitives
+- `projects/reference-app` — sample application and docs viewer
+- `scripts` — internal scripts used to compile docs and generate routes
 
-[useRouteData](projects/reactive-primitives/src/lib/composables/activated-route/use-route-data.composable.ts) - Get route data as a signal
+## Compatibility
 
-## Effects
+- Angular 20+
+- TypeScript 5.9+
+- RxJS 7.8+
 
-[syncQueryParamsEffect](projects/reactive-primitives/src/lib/effects/sync-query-params.effect.ts) - Syncs query params with application state
+## License
 
-[syncLocalStorageEffect](projects/reactive-primitives/src/lib/effects/sync-local-storage.effect.ts) - One-way sync from signal to localStorage
-
-[logChangesEffect](projects/reactive-primitives/src/lib/effects/log-changes.effect.ts) - Development helper to log signal changes
+- MIT
