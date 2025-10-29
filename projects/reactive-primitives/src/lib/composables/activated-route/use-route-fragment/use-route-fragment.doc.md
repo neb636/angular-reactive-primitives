@@ -1,49 +1,19 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocumentationComponent } from '../../../common/layout/documentation/documentation.component';
-import { DocumentationSectionComponent } from '../../../common/layout/documentation-section/documentation-section.component';
-import { CodeBlockComponent } from '../../../common/components/code-block/code-block.component';
+# useRouteFragment
 
-@Component({
-  selector: 'use-route-fragment-page',
-  imports: [
-    DocumentationComponent,
-    DocumentationSectionComponent,
-    CodeBlockComponent,
-  ],
-  template: `
-    <documentation>
-      <ng-container documentation-title>useRouteFragment</ng-container>
+Exposes the route fragment (the part after #) as a signal. This is useful for implementing smooth scrolling to sections, deep linking, or tracking which section of a page is active.
 
-      <ng-container documentation-description>
-        Exposes the route fragment (the part after #) as a signal. This is useful for implementing smooth scrolling to sections, deep linking, or tracking which section of a page is active.
-      </ng-container>
+## Usage
 
-      <documentation-section>
-        <ng-container section-title>Usage</ng-container>
+### Scroll to Section on Load
 
-        <code-block title="Scroll to Section on Load" [code]="code_usage_0" />
-
-        <code-block title="Active Section Highlighting" [code]="code_usage_1" />
-
-        <code-block title="Tab Navigation with Fragment" [code]="code_usage_2" />
-      </documentation-section>
-
-      <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="useRouteFragment Source" [code]="sourceCode" />
-      </documentation-section>
-    </documentation>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class UseRouteFragmentPageComponent {
-  code_usage_0 = `import { Component, effect, inject } from '@angular/core';
+```ts
+import { Component, effect, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { useRouteFragment } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'scrollable-page',
-  template: \`
+  template: `
     <nav>
       <a [routerLink]="[]" fragment="intro">Introduction</a>
       <a [routerLink]="[]" fragment="features">Features</a>
@@ -64,7 +34,7 @@ import { useRouteFragment } from 'angular-reactive-primitives';
       <h2>Pricing</h2>
       <p>Choose your plan...</p>
     </section>
-  \`,
+  `,
 })
 export class ScrollablePageComponent {
   fragment = useRouteFragment();
@@ -85,14 +55,18 @@ export class ScrollablePageComponent {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
-}`;
+}
+```
 
-  code_usage_1 = `import { Component, computed } from '@angular/core';
+### Active Section Highlighting
+
+```ts
+import { Component, computed } from '@angular/core';
 import { useRouteFragment } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'documentation-nav',
-  template: \`
+  template: `
     <nav class="doc-nav">
       @for (section of sections; track section.id) {
         <a
@@ -104,15 +78,15 @@ import { useRouteFragment } from 'angular-reactive-primitives';
         </a>
       }
     </nav>
-  \`,
+  `,
   styles: [
-    \`
+    `
       .doc-nav a.active {
         color: #3b82f6;
         font-weight: 600;
         border-left: 3px solid #3b82f6;
       }
-    \`,
+    `,
   ],
 })
 export class DocumentationNavComponent {
@@ -129,16 +103,20 @@ export class DocumentationNavComponent {
   isActive(sectionId: string): boolean {
     return this.fragment() === sectionId;
   }
-}`;
+}
+```
 
-  code_usage_2 = `import { Component, computed } from '@angular/core';
+### Tab Navigation with Fragment
+
+```ts
+import { Component, computed } from '@angular/core';
 import { useRouteFragment } from 'angular-reactive-primitives';
 
 type TabId = 'overview' | 'details' | 'reviews';
 
 @Component({
   selector: 'tabbed-content',
-  template: \`
+  template: `
     <div class="tabs">
       <button
         [routerLink]="[]"
@@ -176,7 +154,7 @@ type TabId = 'overview' | 'details' | 'reviews';
         }
       }
     </div>
-  \`,
+  `,
 })
 export class TabbedContentComponent {
   fragment = useRouteFragment();
@@ -188,16 +166,5 @@ export class TabbedContentComponent {
     }
     return 'overview'; // default
   });
-}`;
-
-  sourceCode = `import { inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-
-export const useRouteFragment = () => {
-  const route = inject(ActivatedRoute);
-
-  return toSignal(route.fragment, { initialValue: route.snapshot.fragment });
-};
-`;
 }
+```

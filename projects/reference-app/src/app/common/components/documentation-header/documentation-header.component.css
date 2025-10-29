@@ -14,10 +14,15 @@
 }
 
 h1.documentation-header__title {
+  color: var(--Gray-80, #1e293b);
+
+  /* Text lg/Medium */
+  font-family: 'Plus Jakarta Sans';
   font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px; /* 133.333% */
+  letter-spacing: 0.204px;
 }
 
 .documentation-header__right-section {

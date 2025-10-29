@@ -4,7 +4,7 @@ A convenience function that wraps Angular's ActivatedRoute.params, exposing all 
 
 ## Usage
 
-### Using with Resource
+### Resource Fetching Example
 
 ```ts
 import { Component, inject } from '@angular/core';

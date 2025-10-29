@@ -1,6 +1,6 @@
 import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { useThrottledSignal } from '../../use-throttled-signal.composable';
+import { useThrottledSignal } from '../../general/use-throttled-signal/use-throttled-signal.composable';
 import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
 
 export type MousePosition = {

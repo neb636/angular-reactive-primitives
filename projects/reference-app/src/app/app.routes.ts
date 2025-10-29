@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { IntroductionPageComponent } from './pages/getting-started/introduction-page/introduction-page.component';
 import { InstallPageComponent } from './pages/getting-started/install-page/install-page.component';
 import { TestPageComponent } from './pages/test-page/test-page.component';
-import { generateDocRoutes } from './utils/generate-doc-routes';
+import { GENERATED_DOC_ROUTES } from './generated-doc-routes';
 
 const GETTING_STARTED_ROUTES: Routes = [
   {
@@ -17,16 +17,13 @@ const GETTING_STARTED_ROUTES: Routes = [
   },
 ];
 
-// Dynamically generate documentation routes from the library
-const DYNAMIC_DOC_ROUTES = generateDocRoutes();
-
 export const NAVIGATION_ROUTES: Routes = [
   {
     path: 'getting-started',
     title: 'Getting Started',
     children: GETTING_STARTED_ROUTES,
   },
-  ...DYNAMIC_DOC_ROUTES,
+  ...GENERATED_DOC_ROUTES,
 ];
 
 export const appRoutes: Routes = [

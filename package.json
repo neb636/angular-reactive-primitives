@@ -9,8 +9,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint reference-app && ng lint reactive-primitives",
-    "docs:dev": "ng serve reference-app",
-    "docs:build": "ng build reference-app --configuration=production"
+    "compile:docs": "node scripts/compile-docs.js",
+    "generate:routes": "node scripts/generate-routes.js",
+    "build:docs": "npm run compile:docs && npm run generate:routes",
+    "docs:dev": "npm run build:docs && ng serve reference-app",
+    "docs:build": "npm run build:docs && ng build reference-app --configuration=production"
   },
   "prettier": {
     "printWidth": 100,

@@ -11,11 +11,3 @@ export const useRouteQueryParams = <
     initialValue: route.snapshot.queryParams,
   }) as Signal<T>;
 };
-
-export const useQueryParameter = <T extends undefined | string>(
-  paramName: string,
-) => {
-  const queryParameters = useQueryParameters();
-
-  return computed(() => queryParameters()[paramName] as T);
-};

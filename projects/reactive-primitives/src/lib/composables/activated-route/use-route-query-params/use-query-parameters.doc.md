@@ -1,43 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocumentationComponent } from '../../../common/layout/documentation/documentation.component';
-import { DocumentationSectionComponent } from '../../../common/layout/documentation-section/documentation-section.component';
-import { CodeBlockComponent } from '../../../common/components/code-block/code-block.component';
+# useRouteQueryParams
 
-@Component({
-  selector: 'use-query-parameters-page',
-  imports: [
-    DocumentationComponent,
-    DocumentationSectionComponent,
-    CodeBlockComponent,
-  ],
-  template: `
-    <documentation>
-      <ng-container documentation-title>useRouteQueryParams</ng-container>
+Exposes all query parameters as a signal-based object. This is useful when you need to access multiple query parameters at once or work with the entire query parameter object reactively.
 
-      <ng-container documentation-description>
-        Exposes all query parameters as a signal-based object. This is useful when you need to access multiple query parameters at once or work with the entire query parameter object reactively.
-      </ng-container>
+## Usage
 
-      <documentation-section>
-        <ng-container section-title>Usage</ng-container>
+### Search and Filter
 
-        <code-block title="Search and Filter" [code]="code_usage_0" />
-
-        <code-block title="Pagination" [code]="code_usage_1" />
-
-        <code-block title="Complex Filters" [code]="code_usage_2" />
-      </documentation-section>
-
-      <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="useRouteQueryParams Source" [code]="sourceCode" />
-      </documentation-section>
-    </documentation>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class UseQueryParametersPageComponent {
-  code_usage_0 = `import { Component, inject } from '@angular/core';
+```ts
+import { Component, inject } from '@angular/core';
 import { useRouteQueryParams } from 'angular-reactive-primitives';
 
 interface SearchParams {
@@ -50,18 +20,18 @@ interface SearchParams {
 // Route: /search?q=laptop&category=electronics&sort=price&page=1
 @Component({
   selector: 'search-results',
-  template: \`
+  template: `
     <div class="search">
       <h1>Search Results</h1>
       <div class="filters">
         <input
           [value]="queryParams().q || ''"
-          (input)="updateQuery(\$event)"
+          (input)="updateQuery($event)"
           placeholder="Search..."
         />
         <select
           [value]="queryParams().category || ''"
-          (change)="updateCategory(\$event)"
+          (change)="updateCategory($event)"
         >
           <option value="">All Categories</option>
           <option value="electronics">Electronics</option>
@@ -76,7 +46,7 @@ interface SearchParams {
         }
       }
     </div>
-  \`,
+  `,
 })
 export class SearchResultsComponent {
   queryParams = useRouteQueryParams<SearchParams>();
@@ -103,9 +73,13 @@ export class SearchResultsComponent {
       queryParamsHandling: 'merge',
     });
   }
-}`;
+}
+```
 
-  code_usage_1 = `import { Component, computed, inject } from '@angular/core';
+### Pagination
+
+```ts
+import { Component, computed, inject } from '@angular/core';
 import { useRouteQueryParams } from 'angular-reactive-primitives';
 import { Router } from '@angular/router';
 
@@ -116,7 +90,7 @@ interface PaginationParams {
 
 @Component({
   selector: 'paginated-list',
-  template: \`
+  template: `
     <div class="list">
       @for (item of items(); track item.id) {
         <div class="item">{{ item.name }}</div>
@@ -138,7 +112,7 @@ interface PaginationParams {
         Next
       </button>
     </div>
-  \`,
+  `,
 })
 export class PaginatedListComponent {
   queryParams = useRouteQueryParams<PaginationParams>();
@@ -168,9 +142,13 @@ export class PaginatedListComponent {
       queryParamsHandling: 'merge',
     });
   }
-}`;
+}
+```
 
-  code_usage_2 = `import { Component, computed } from '@angular/core';
+### Complex Filters
+
+```ts
+import { Component, computed } from '@angular/core';
 import { useRouteQueryParams } from 'angular-reactive-primitives';
 
 interface FilterParams {
@@ -183,7 +161,7 @@ interface FilterParams {
 
 @Component({
   selector: 'product-filters',
-  template: \`
+  template: `
     <div class="filters">
       <h3>Filters</h3>
 
@@ -218,7 +196,7 @@ interface FilterParams {
         }
       </div>
     </div>
-  \`,
+  `,
 })
 export class ProductFiltersComponent {
   queryParams = useRouteQueryParams<FilterParams>();
@@ -237,20 +215,5 @@ export class ProductFiltersComponent {
       queryParams: {},
     });
   }
-}`;
-
-  sourceCode = `import { computed, inject, Signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-
-export const useRouteQueryParams = <
-  T extends { [key: string]: undefined | string },
->() => {
-  const route = inject(ActivatedRoute);
-
-  return toSignal(route.queryParams, {
-    initialValue: route.snapshot.queryParams,
-  }) as Signal<T>;
-};
-`;
 }
+```

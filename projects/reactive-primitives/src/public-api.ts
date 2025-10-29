@@ -4,7 +4,7 @@
 
 // Activated Route Composables
 export * from './lib/composables/activated-route/use-route-params/use-route-params.composable';
-export * from './lib/composables/activated-route/use-query-parameters/use-query-parameters.composable';
+export * from './lib/composables/activated-route/use-route-query-params/use-query-parameters.composable';
 export * from './lib/composables/activated-route/use-route-data/use-route-data.composable';
 export * from './lib/composables/activated-route/use-route-fragment/use-route-fragment.composable';
 

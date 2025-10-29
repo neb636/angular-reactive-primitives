@@ -1,52 +1,18 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocumentationComponent } from '../../common/layout/documentation/documentation.component';
-import { DocumentationSectionComponent } from '../../common/layout/documentation-section/documentation-section.component';
-import { CodeBlockComponent } from '../../common/components/code-block/code-block.component';
+# syncQueryParamsEffect
 
-@Component({
-  selector: 'sync-query-params-page',
-  imports: [
-    DocumentationComponent,
-    DocumentationSectionComponent,
-    CodeBlockComponent,
-  ],
-  template: `
-    <documentation>
-      <ng-container documentation-title>syncQueryParamsEffect</ng-container>
+Effect that syncs signal state to URL query parameters (one-way: signal → URL). This is useful when you want to make application state shareable via URL without reading from query params.
 
-      <ng-container documentation-description>
-        Effect that syncs signal state to URL query parameters (one-way: signal → URL). This is useful when you want to make application state shareable via URL without reading from query params.
-      </ng-container>
+## Usage
 
-      <documentation-section>
-        <ng-container section-title>Usage</ng-container>
+### Sync Filter State to URL
 
-        <code-block title="Sync Filter State to URL" [code]="code_usage_0" />
-
-        <code-block title="Pagination State" [code]="code_usage_1" />
-
-        <code-block title="Form State with Replace URL" [code]="code_usage_2" />
-
-        <code-block title="Multi-Select Filters" [code]="code_usage_3" />
-
-        <code-block title="Tab Selection" [code]="code_usage_4" />
-      </documentation-section>
-
-      <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="syncQueryParamsEffect Source" [code]="sourceCode" />
-      </documentation-section>
-    </documentation>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class SyncQueryParamsPageComponent {
-  code_usage_0 = `import { Component, signal, computed } from '@angular/core';
+```ts
+import { Component, signal, computed } from '@angular/core';
 import { syncQueryParamsEffect } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'product-filters',
-  template: \`
+  template: `
     <div class="filters">
       <input [(ngModel)]="searchQuery" placeholder="Search products..." />
 
@@ -63,7 +29,7 @@ import { syncQueryParamsEffect } from 'angular-reactive-primitives';
         <option value="rating">Rating</option>
       </select>
     </div>
-  \`,
+  `,
 })
 export class ProductFiltersComponent {
   searchQuery = signal('');
@@ -83,14 +49,18 @@ export class ProductFiltersComponent {
       queryParams: this.filterParams,
     });
   }
-}`;
+}
+```
 
-  code_usage_1 = `import { Component, signal, computed } from '@angular/core';
+### Pagination State
+
+```ts
+import { Component, signal, computed } from '@angular/core';
 import { syncQueryParamsEffect } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'paginated-list',
-  template: \`
+  template: `
     <div class="pagination">
       <button (click)="previousPage()" [disabled]="page() === 1">
         Previous
@@ -98,7 +68,7 @@ import { syncQueryParamsEffect } from 'angular-reactive-primitives';
       <span>Page {{ page() }}</span>
       <button (click)="nextPage()">Next</button>
     </div>
-  \`,
+  `,
 })
 export class PaginatedListComponent {
   page = signal(1);
@@ -123,19 +93,23 @@ export class PaginatedListComponent {
   previousPage() {
     this.page.update((p) => Math.max(1, p - 1));
   }
-}`;
+}
+```
 
-  code_usage_2 = `import { Component, signal, computed } from '@angular/core';
+### Form State with Replace URL
+
+```ts
+import { Component, signal, computed } from '@angular/core';
 import { syncQueryParamsEffect } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'search-form',
-  template: \`
+  template: `
     <form>
       <input [(ngModel)]="query" placeholder="Search..." />
       <button type="button" (click)="clearSearch()">Clear</button>
     </form>
-  \`,
+  `,
 })
 export class SearchFormComponent {
   query = signal('');
@@ -158,14 +132,18 @@ export class SearchFormComponent {
   clearSearch() {
     this.query.set('');
   }
-}`;
+}
+```
 
-  code_usage_3 = `import { Component, signal, computed } from '@angular/core';
+### Multi-Select Filters
+
+```ts
+import { Component, signal, computed } from '@angular/core';
 import { syncQueryParamsEffect } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'multi-filter',
-  template: \`
+  template: `
     <div class="filters">
       <h3>Brands</h3>
       @for (brand of availableBrands; track brand) {
@@ -183,13 +161,13 @@ import { syncQueryParamsEffect } from 'angular-reactive-primitives';
       <input
         type="range"
         [value]="maxPrice()"
-        (input)="updateMaxPrice(\$event)"
+        (input)="updateMaxPrice($event)"
         min="0"
         max="1000"
       />
-      <span>\${{ maxPrice() }}</span>
+      <span>${{ maxPrice() }}</span>
     </div>
-  \`,
+  `,
 })
 export class MultiFilterComponent {
   selectedBrands = signal<string[]>([]);
@@ -224,16 +202,20 @@ export class MultiFilterComponent {
     const value = parseInt((event.target as HTMLInputElement).value);
     this.maxPrice.set(value);
   }
-}`;
+}
+```
 
-  code_usage_4 = `import { Component, signal, computed } from '@angular/core';
+### Tab Selection
+
+```ts
+import { Component, signal, computed } from '@angular/core';
 import { syncQueryParamsEffect } from 'angular-reactive-primitives';
 
 type TabId = 'overview' | 'specs' | 'reviews';
 
 @Component({
   selector: 'tabbed-view',
-  template: \`
+  template: `
     <div class="tabs">
       @for (tab of tabs; track tab.id) {
         <button
@@ -244,7 +226,7 @@ type TabId = 'overview' | 'specs' | 'reviews';
         </button>
       }
     </div>
-  \`,
+  `,
 })
 export class TabbedViewComponent {
   activeTab = signal<TabId>('overview');
@@ -273,67 +255,5 @@ export class TabbedViewComponent {
   selectTab(tabId: TabId) {
     this.activeTab.set(tabId);
   }
-}`;
-
-  sourceCode = `import { Signal, inject, effect } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-export type QueryParamEffectOptions = {
-  queryParamsHandling?: 'merge' | 'preserve';
-  replaceUrl?: boolean;
-  skipLocationChange?: boolean;
-};
-
-export type SyncQueryParamsEffectConfig = {
-  queryParams: Signal<Record<string, unknown>>;
-  options?: QueryParamEffectOptions;
-};
-
-/**
- * Effect to sync query params with the application state for the current route.
- *
- * @param config - Configuration object
- * @param config.queryParams - Signal containing query params
- * @param config.options - Optional options for query params handling
- *   - queryParamsHandling: 'merge' (default) | 'preserve'
- *   - replaceUrl: Whether to replace the current URL with the new one (default: false)
- *   - skipLocationChange: Whether to skip location change (default: false)
- *
- * Example:
- *
- * export class MyComponent {
- *   private selectedLabel = signal('');
- *   private query = signal('');
- *
- *   constructor() {
- *     syncQueryParamsEffect({
- *       queryParams: computed(() => ({ selectedLabel: this.selectedLabel(), query: this.query() })),
- *       options: { queryParamsHandling: 'preserve' }
- *     });
- *   }
- * }
- */
-export const syncQueryParamsEffect = (config: SyncQueryParamsEffectConfig) => {
-  const activatedRoute = inject(ActivatedRoute);
-  const router = inject(Router);
-
-  const {
-    queryParamsHandling = 'merge',
-    skipLocationChange = false,
-    replaceUrl = false,
-  } = config.options || {};
-
-  return effect(() => {
-    const queryParams = config.queryParams();
-
-    router.navigate([], {
-      relativeTo: activatedRoute,
-      queryParams,
-      queryParamsHandling,
-      skipLocationChange,
-      replaceUrl,
-    });
-  });
-};
-`;
 }
+```

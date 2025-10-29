@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '../../common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '../../common/layout/documentation-section/documentation-section.component';
-import { ParametersComponent } from '../../common/components/parameters/parameters.component';
 import { CodeBlockComponent } from '../../common/components/code-block/code-block.component';
 
 @Component({
@@ -9,51 +8,184 @@ import { CodeBlockComponent } from '../../common/components/code-block/code-bloc
   imports: [
     DocumentationComponent,
     DocumentationSectionComponent,
-    ParametersComponent,
     CodeBlockComponent,
   ],
   template: `
     <documentation>
       <ng-container documentation-title>logChangesEffect</ng-container>
 
-      <ng-container documentation-description
-        >Development helper effect that logs signal changes to the console. Useful for debugging and
-        understanding signal behavior during development.</ng-container
-      >
-
-      <parameters [parameters]="parameters"></parameters>
+      <ng-container documentation-description>
+        Development helper effect that logs signal changes to console. Useful for debugging and understanding signal behavior during development.
+      </ng-container>
 
       <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block [title]="'logChangesEffect Source'" [code]="sourceCode" />
+        <ng-container section-title>Usage</ng-container>
+
+        <code-block title="Basic Logging" [code]="code_usage_0" />
+
+        <code-block title="Multiple Log Levels" [code]="code_usage_1" />
+
+        <code-block title="Debugging Complex State" [code]="code_usage_2" />
+
+        <code-block title="Conditional Logging" [code]="code_usage_3" />
       </documentation-section>
 
       <documentation-section>
-        <ng-container section-title>Example Usage</ng-container>
-        <code-block title="Example Usage" [code]="exampleCode" />
+        <ng-container section-title>Source Code</ng-container>
+        <code-block title="logChangesEffect Source" [code]="sourceCode" />
       </documentation-section>
     </documentation>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogChangesPageComponent {
-  parameters = [
-    {
-      name: 'config.signal',
-      type: 'Signal<any>',
-      description: 'The signal to monitor for changes',
-    },
-    {
-      name: 'config.label',
-      type: 'string',
-      description: 'Optional label to identify the signal in logs (default: "Signal")',
-    },
-    {
-      name: 'config.logLevel',
-      type: "'log' | 'warn' | 'error' | 'info'",
-      description: "Console method to use for logging (default: 'log')",
-    },
-  ];
+  code_usage_0 = `import { Component, signal } from '@angular/core';
+import { logChangesEffect } from 'angular-reactive-primitives';
+
+@Component({
+  selector: 'debug-component',
+  template: \`
+    <input [(ngModel)]="searchQuery" placeholder="Search..." />
+    <p>Query: {{ searchQuery() }}</p>
+  \`,
+})
+export class DebugComponent {
+  searchQuery = signal('');
+
+  constructor() {
+    // Log all changes to searchQuery
+    logChangesEffect({
+      signal: this.searchQuery,
+      label: 'Search Query',
+    });
+  }
+}
+
+// Console output:
+// [2025-10-28T12:34:56.789Z] Search Query: angular
+// [2025-10-28T12:34:58.123Z] Search Query: angular reactive`;
+
+  code_usage_1 = `import { Component, signal } from '@angular/core';
+import { logChangesEffect } from 'angular-reactive-primitives';
+
+@Component({
+  selector: 'monitoring-component',
+  template: \`
+    <div>
+      <button (click)="incrementCounter()">Count: {{ counter() }}</button>
+      <button (click)="toggleError()">Toggle Error</button>
+    </div>
+  \`,
+})
+export class MonitoringComponent {
+  counter = signal(0);
+  errorState = signal(false);
+  selectedItems = signal<string[]>([]);
+
+  constructor() {
+    // Regular logging
+    logChangesEffect({
+      signal: this.counter,
+      label: 'Counter',
+      logLevel: 'log',
+    });
+
+    // Warning level for important state
+    logChangesEffect({
+      signal: this.selectedItems,
+      label: 'Selected Items',
+      logLevel: 'warn',
+    });
+
+    // Error level for error states
+    logChangesEffect({
+      signal: this.errorState,
+      label: 'Error State',
+      logLevel: 'error',
+    });
+  }
+
+  incrementCounter() {
+    this.counter.update((c) => c + 1);
+  }
+
+  toggleError() {
+    this.errorState.update((e) => !e);
+  }
+}`;
+
+  code_usage_2 = `import { Component, signal, computed } from '@angular/core';
+import { logChangesEffect } from 'angular-reactive-primitives';
+
+interface UserPreferences {
+  theme: 'light' | 'dark';
+  language: string;
+  notifications: boolean;
+}
+
+@Component({
+  selector: 'preferences-debug',
+  template: \`
+    <div>
+      <select [(ngModel)]="theme">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  \`,
+})
+export class PreferencesDebugComponent {
+  theme = signal<'light' | 'dark'>('light');
+  language = signal('en');
+  notifications = signal(true);
+
+  preferences = computed<UserPreferences>(() => ({
+    theme: this.theme(),
+    language: this.language(),
+    notifications: this.notifications(),
+  }));
+
+  constructor() {
+    // Log the entire preferences object
+    logChangesEffect({
+      signal: this.preferences,
+      label: 'User Preferences',
+      logLevel: 'info',
+    });
+
+    // Log individual properties
+    logChangesEffect({
+      signal: this.theme,
+      label: 'Theme',
+    });
+  }
+}
+
+// Console output:
+// [2025-10-28T12:34:56.789Z] User Preferences: {theme: 'dark', language: 'en', notifications: true}
+// [2025-10-28T12:34:56.789Z] Theme: dark`;
+
+  code_usage_3 = `import { Component, signal, effect } from '@angular/core';
+import { logChangesEffect } from 'angular-reactive-primitives';
+import { environment } from '../environments/environment';
+
+@Component({
+  selector: 'production-safe',
+  template: \`<div>Counter: {{ counter() }}</div>\`,
+})
+export class ProductionSafeComponent {
+  counter = signal(0);
+
+  constructor() {
+    // Only log in development
+    if (!environment.production) {
+      logChangesEffect({
+        signal: this.counter,
+        label: 'Counter (Dev Only)',
+      });
+    }
+  }
+}`;
 
   sourceCode = `import { Signal, effect } from '@angular/core';
 
@@ -103,140 +235,6 @@ export const logChangesEffect = (config: LogChangesEffectConfig) => {
 
     console[logLevel](\`[\${timestamp}] \${label}:\`, value);
   });
-};`;
-
-  exampleCode = `import { Component, signal, computed } from '@angular/core';
-import { logChangesEffect } from '@angular/reactive-primitives';
-
-// Example 1: Basic signal logging
-@Component({
-  selector: 'search-component',
-  template: \`
-    <input 
-      [value]="searchQuery()" 
-      (input)="searchQuery.set($any($event.target).value)"
-      placeholder="Search..."
-    />
-  \`
-})
-export class SearchComponent {
-  searchQuery = signal('');
-
-  constructor() {
-    // Log every change to searchQuery
-    logChangesEffect({
-      signal: this.searchQuery,
-      label: 'Search Query',
-    });
-  }
-}
-
-// Example 2: Multiple signals with different log levels
-@Component({
-  selector: 'form-component',
-  template: \`<form><!-- form fields --></form>\`
-})
-export class FormComponent {
-  username = signal('');
-  email = signal('');
-  formErrors = signal<string[]>([]);
-  isSubmitting = signal(false);
-
-  constructor() {
-    // Log user inputs with standard log level
-    logChangesEffect({
-      signal: this.username,
-      label: 'Username',
-      logLevel: 'log',
-    });
-
-    logChangesEffect({
-      signal: this.email,
-      label: 'Email',
-      logLevel: 'log',
-    });
-
-    // Log errors with error level
-    logChangesEffect({
-      signal: this.formErrors,
-      label: 'Form Errors',
-      logLevel: 'error',
-    });
-
-    // Log submission state with info level
-    logChangesEffect({
-      signal: this.isSubmitting,
-      label: 'Form Submitting',
-      logLevel: 'info',
-    });
-  }
-}
-
-// Example 3: Logging computed signals
-@Component({
-  selector: 'cart-component',
-  template: \`
-    <div>
-      <p>Items: {{ itemCount() }}</p>
-      <p>Total: \${{ totalPrice() }}</p>
-    </div>
-  \`
-})
-export class CartComponent {
-  items = signal<Array<{ id: number; price: number; quantity: number }>>([]);
-
-  itemCount = computed(() => 
-    this.items().reduce((sum, item) => sum + item.quantity, 0)
-  );
-
-  totalPrice = computed(() =>
-    this.items().reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  );
-
-  constructor() {
-    // Log when items array changes
-    logChangesEffect({
-      signal: this.items,
-      label: 'Cart Items',
-    });
-
-    // Log when computed values change
-    logChangesEffect({
-      signal: this.itemCount,
-      label: 'Item Count',
-      logLevel: 'info',
-    });
-
-    logChangesEffect({
-      signal: this.totalPrice,
-      label: 'Total Price',
-      logLevel: 'info',
-    });
-  }
-
-  addItem(item: { id: number; price: number; quantity: number }) {
-    this.items.update(items => [...items, item]);
-  }
-}
-
-// Example 4: Conditional logging for debugging
-@Component({
-  selector: 'debug-component',
-  template: \`<div>{{ data() }}</div>\`
-})
-export class DebugComponent {
-  data = signal<any>(null);
-  isDebugMode = signal(false);
-
-  constructor() {
-    // Only log in debug mode (in production, you might use environment.production)
-    if (this.isDebugMode()) {
-      logChangesEffect({
-        signal: this.data,
-        label: 'Debug Data',
-        logLevel: 'warn',
-      });
-    }
-  }
-}`;
+};
+`;
 }

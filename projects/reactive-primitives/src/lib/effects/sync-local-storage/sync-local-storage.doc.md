@@ -1,50 +1,18 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocumentationComponent } from '../../common/layout/documentation/documentation.component';
-import { DocumentationSectionComponent } from '../../common/layout/documentation-section/documentation-section.component';
-import { CodeBlockComponent } from '../../common/components/code-block/code-block.component';
+# syncLocalStorageEffect
 
-@Component({
-  selector: 'sync-local-storage-page',
-  imports: [
-    DocumentationComponent,
-    DocumentationSectionComponent,
-    CodeBlockComponent,
-  ],
-  template: `
-    <documentation>
-      <ng-container documentation-title>syncLocalStorageEffect</ng-container>
+Effect that syncs a signal to localStorage (one-way: signal → storage). This is useful when you want to persist signal changes but don't need two-way sync.
 
-      <ng-container documentation-description>
-        Effect that syncs a signal to localStorage (one-way: signal → storage). This is useful when you want to persist signal changes but don't need two-way sync.
-      </ng-container>
+## Usage
 
-      <documentation-section>
-        <ng-container section-title>Usage</ng-container>
+### Persist User Preferences
 
-        <code-block title="Persist User Preferences" [code]="code_usage_0" />
-
-        <code-block title="Auto-Save Form Data" [code]="code_usage_1" />
-
-        <code-block title="Custom Serialization" [code]="code_usage_2" />
-
-        <code-block title="Shopping Cart Persistence" [code]="code_usage_3" />
-      </documentation-section>
-
-      <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="syncLocalStorageEffect Source" [code]="sourceCode" />
-      </documentation-section>
-    </documentation>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class SyncLocalStoragePageComponent {
-  code_usage_0 = `import { Component, signal } from '@angular/core';
+```ts
+import { Component, signal } from '@angular/core';
 import { syncLocalStorageEffect } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'user-settings',
-  template: \`
+  template: `
     <div class="settings">
       <label>
         Theme:
@@ -69,7 +37,7 @@ import { syncLocalStorageEffect } from 'angular-reactive-primitives';
         Enable Notifications
       </label>
     </div>
-  \`,
+  `,
 })
 export class UserSettingsComponent {
   theme = signal('light');
@@ -93,9 +61,13 @@ export class UserSettingsComponent {
       key: 'user-notifications',
     });
   }
-}`;
+}
+```
 
-  code_usage_1 = `import { Component, signal } from '@angular/core';
+### Auto-Save Form Data
+
+```ts
+import { Component, signal } from '@angular/core';
 import { syncLocalStorageEffect } from 'angular-reactive-primitives';
 
 interface FormData {
@@ -106,7 +78,7 @@ interface FormData {
 
 @Component({
   selector: 'auto-save-form',
-  template: \`
+  template: `
     <form>
       <input [(ngModel)]="formTitle" placeholder="Title" />
       <textarea [(ngModel)]="formContent" placeholder="Content"></textarea>
@@ -114,7 +86,7 @@ interface FormData {
         {{ saveStatus }}
       </div>
     </form>
-  \`,
+  `,
 })
 export class AutoSaveFormComponent {
   formTitle = signal('');
@@ -150,9 +122,13 @@ export class AutoSaveFormComponent {
       }
     }
   }
-}`;
+}
+```
 
-  code_usage_2 = `import { Component, signal } from '@angular/core';
+### Custom Serialization
+
+```ts
+import { Component, signal } from '@angular/core';
 import { syncLocalStorageEffect } from 'angular-reactive-primitives';
 
 interface ComplexData {
@@ -162,7 +138,7 @@ interface ComplexData {
 
 @Component({
   selector: 'custom-serialization',
-  template: \`<div>Custom data with Date and Map</div>\`,
+  template: `<div>Custom data with Date and Map</div>`,
 })
 export class CustomSerializationComponent {
   complexData = signal<ComplexData>({
@@ -186,9 +162,13 @@ export class CustomSerializationComponent {
       },
     });
   }
-}`;
+}
+```
 
-  code_usage_3 = `import { Component, signal } from '@angular/core';
+### Shopping Cart Persistence
+
+```ts
+import { Component, signal } from '@angular/core';
 import { syncLocalStorageEffect } from 'angular-reactive-primitives';
 
 interface CartItem {
@@ -200,19 +180,19 @@ interface CartItem {
 
 @Component({
   selector: 'shopping-cart',
-  template: \`
+  template: `
     <div class="cart">
       <h2>Shopping Cart ({{ itemCount() }} items)</h2>
       @for (item of cart(); track item.id) {
         <div class="cart-item">
           <span>{{ item.name }}</span>
           <span>{{ item.quantity }}x</span>
-          <span>\${{ item.price }}</span>
+          <span>${{ item.price }}</span>
         </div>
       }
-      <div class="total">Total: \${{ totalPrice() }}</div>
+      <div class="total">Total: ${{ totalPrice() }}</div>
     </div>
-  \`,
+  `,
 })
 export class ShoppingCartComponent {
   cart = signal<CartItem[]>([]);
@@ -255,60 +235,5 @@ export class ShoppingCartComponent {
   removeItem(id: string) {
     this.cart.update((items) => items.filter((item) => item.id !== id));
   }
-}`;
-
-  sourceCode = `import { Signal, effect, inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-
-export type SyncLocalStorageEffectConfig = {
-  signal: Signal<any>;
-  key: string;
-  serialize?: (value: any) => string;
-};
-
-/**
- * Effect that syncs a signal to localStorage (one-way: signal → storage).
- * This is useful when you want to persist signal changes but don't need
- * two-way sync (use useLocalStorage composable for that).
- *
- * @param config - Configuration object
- * @param config.signal - Signal to sync to localStorage
- * @param config.key - localStorage key to sync to
- * @param config.serialize - Optional custom serialization function
- *
- * Example:
- *
- * export class MyComponent {
- *   private formData = signal({ name: '', email: '' });
- *
- *   constructor() {
- *     // Sync form data to localStorage whenever it changes
- *     syncLocalStorageEffect({
- *       signal: this.formData,
- *       key: 'form-data'
- *     });
- *   }
- * }
- */
-export const syncLocalStorageEffect = (config: SyncLocalStorageEffectConfig) => {
-  const document = inject(DOCUMENT);
-  const storage = document.defaultView?.localStorage;
-
-  if (!storage) {
-    console.warn('localStorage is not available');
-    return;
-  }
-
-  const { signal, key, serialize = JSON.stringify } = config;
-
-  return effect(() => {
-    const value = signal();
-    try {
-      storage.setItem(key, serialize(value));
-    } catch (error) {
-      console.warn(\`Failed to save to localStorage for key "\${key}":\`, error);
-    }
-  });
-};
-`;
 }
+```

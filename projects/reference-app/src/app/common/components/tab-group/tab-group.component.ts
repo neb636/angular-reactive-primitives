@@ -20,7 +20,7 @@ export class TabComponent {
 
 @Component({
   selector: 'tab-group',
-  imports: [CommonModule, TabComponent],
+  imports: [CommonModule],
   styleUrls: ['./tab-group.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
