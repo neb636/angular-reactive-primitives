@@ -1,11 +1,3 @@
-:host {
-}
-
-.expandable-nav-menu {
-  padding: 0;
-  flex: 1;
-}
-
 .expandable-nav-menu__section {
   border-bottom: 1px solid #e5e7eb;
 }
@@ -43,7 +35,9 @@
   transform: rotate(0deg);
 }
 
-.expandable-nav-menu__chevron-icon:not(.expandable-nav-menu__chevron-icon--expanded) {
+.expandable-nav-menu__chevron-icon:not(
+  .expandable-nav-menu__chevron-icon--expanded
+) {
   transform: rotate(-90deg);
 }
 

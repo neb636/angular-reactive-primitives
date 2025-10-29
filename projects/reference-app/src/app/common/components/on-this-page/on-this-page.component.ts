@@ -18,20 +18,19 @@ export interface PageSection {
       <ul class="on-this-page__list">
         @for (section of sections(); track section.id) {
           <li class="on-this-page__item">
-            <a 
-              [href]="'#' + section.id" 
+            <a
+              [href]="'#' + section.id"
               class="on-this-page__link"
               [class.on-this-page__link--active]="activeSection() === section.id"
-              (click)="scrollToSection($event, section.id)">
+              (click)="scrollToSection($event, section.id)"
+            >
               {{ section.title }}
             </a>
           </li>
         }
       </ul>
       @if (sections().length > 0) {
-        <button 
-          class="on-this-page__back-to-top"
-          (click)="scrollToTop($event)">
+        <button class="on-this-page__back-to-top" (click)="scrollToTop($event)">
           ↑ Back to top
         </button>
       }

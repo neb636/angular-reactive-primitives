@@ -1,33 +1,32 @@
-
-
 :host {
-    margin-bottom: 48px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
 
-    ::ng-deep {
-        p {
-            font-size: 16px;
-            color: #6b7280;
-            margin: 0 0 16px 0;
-            line-height: 1.6;
-        }
-
-        ul {
-            margin: 0;
-            padding-left: 24px;
-        }
-
-        li {
-            font-size: 16px;
-            color: #6b7280;
-            margin-bottom: 8px;
-            line-height: 1.6;
-        }
+  ::ng-deep {
+    ul {
+      margin: 0;
+      padding-left: 24px;
     }
+
+    li {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+  }
 }
 
 .documentation-section__heading {
-    font-size: 24px;
-    font-weight: 600;
-    color: #374151;
-    margin: 0 0 16px 0;
+  color: var(--Gray-80, #1e293b);
+
+  /* Text xl/SemiBold */
+  font-family: 'Plus Jakarta Sans';
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 28px; /* 140% */
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
 }

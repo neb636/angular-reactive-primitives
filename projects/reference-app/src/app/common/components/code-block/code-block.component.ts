@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import hljs from 'highlight.js/lib/core';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -22,22 +28,30 @@ hljs.registerLanguage('shell', bash);
   selector: 'code-block',
   template: `
     <div class="code-block">
-      <div class="code-header">
-        <span>{{ title() }}</span>
-        <button
-          class="copy-button"
-          type="button"
-          (click)="copy()"
-          [attr.aria-label]="'Copy ' + title()"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path
-              d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
-            />
-          </svg>
-        </button>
-      </div>
-      <pre><code [innerHTML]="highlightedCode()"></code></pre>
+      @if (title()) {
+        <div class="code-header">
+          <span>{{ title() }}</span>
+          <button
+            class="copy-button"
+            type="button"
+            (click)="copy()"
+            [attr.aria-label]="'Copy ' + title()"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+              />
+            </svg>
+          </button>
+        </div>
+      }
+      <pre><code class="hljs" [innerHTML]="highlightedCode()"></code></pre>
     </div>
   `,
   styleUrls: ['./code-block.component.css'],

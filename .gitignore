@@ -17,3 +17,5 @@ npm-debug.log
 .env
 .env.local
 .idea
+
+projects/reference-app/src/app/compiled-pages
