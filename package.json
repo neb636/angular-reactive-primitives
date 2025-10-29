@@ -3,17 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve reference-app",
+    "start": "ng serve documentation-site",
     "build": "ng build reactive-primitives",
-    "build:reference-app": "ng build reference-app",
+    "build:documentation-site": "ng build documentation-site",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint reference-app && ng lint reactive-primitives",
+    "lint": "ng lint documentation-site && ng lint reactive-primitives",
     "compile:docs": "node scripts/compile-docs.js",
     "generate:routes": "node scripts/generate-routes.js",
     "build:docs": "npm run compile:docs && npm run generate:routes",
-    "docs:dev": "npm run build:docs && ng serve reference-app",
-    "docs:build": "npm run build:docs && ng build reference-app --configuration=production"
+    "docs:dev": "npm run build:docs && ng serve documentation-site",
+    "docs:build": "npm run build:docs && ng build documentation-site --configuration=production"
   },
   "prettier": {
     "printWidth": 100,

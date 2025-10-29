@@ -12,11 +12,11 @@ const path = require('path');
 
 const PAGES_PATH = path.join(
   __dirname,
-  '../projects/reference-app/src/app/compiled-pages',
+  '../projects/documentation-site/src/app/compiled-pages',
 );
 const ROUTES_OUTPUT = path.join(
   __dirname,
-  '../projects/reference-app/src/app/generated-doc-routes.ts',
+  '../projects/documentation-site/src/app/generated-doc-routes.ts',
 );
 
 /**

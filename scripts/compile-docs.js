@@ -17,7 +17,7 @@ const LIB_PATH = path.join(
 );
 const PAGES_PATH = path.join(
   __dirname,
-  '../projects/reference-app/src/app/compiled-pages',
+  '../projects/documentation-site/src/app/compiled-pages',
 );
 
 /**

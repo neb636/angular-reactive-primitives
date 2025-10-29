@@ -53,7 +53,7 @@ npm run docs:dev
 ## Project structure
 
 - `projects/reactive-primitives` — library source and primitives
-- `projects/reference-app` — Documentation site
+- `projects/documentation-site` — Documentation site
 - `scripts` — internal scripts used to compile docs and generate routes
 
 ### Creating Documentation
@@ -77,7 +77,7 @@ npm run docs:dev
    ```
 
 4. The system automatically:
-   - Compiles your `.doc.md` into a component in `projects/reference-app/src/app/pages/`
+   - Compiles your `.doc.md` into a component in `projects/documentation-site/src/app/pages/`
    - Scans all generated components
    - Generates route definitions in `generated-doc-routes.ts`
 
@@ -103,7 +103,7 @@ projects/
 │               ├── use-my-feature.composable.ts  # Implementation
 │               └── use-my-feature.doc.md         # Documentation
 │
-└── reference-app/
+└── documentation-site/
     └── src/app/
         ├── app.routes.ts                         # Routes (manual)
         └── pages/
