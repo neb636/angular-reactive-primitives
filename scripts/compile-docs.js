@@ -205,6 +205,26 @@ function parseMarkdown(content) {
       continue;
     }
 
+    // Parse bullet lists (lines starting with "- ")
+    if (currentSection && line.trim().startsWith('- ')) {
+      const listItems = [];
+      let j = i;
+      
+      // Collect consecutive bullet items
+      while (j < lines.length && lines[j].trim().startsWith('- ')) {
+        const itemText = lines[j].trim().slice(2).trim(); // Remove "- " prefix
+        listItems.push(itemText);
+        j++;
+      }
+      
+      // Add list as a single content item
+      if (listItems.length > 0) {
+        currentSection.content.push({ type: 'list', items: listItems });
+        i = j - 1; // -1 because loop will increment
+        continue;
+      }
+    }
+
     // Add content to current section
     if (currentSection && line.trim()) {
       currentSection.content.push({ type: 'text', value: line.trim() });
@@ -471,6 +491,19 @@ function generateComponent(
           const processedText = processMarkdown(escapeHtml(contentItem.value));
           templateSections += `
         <p>${processedText}</p>
+`;
+        } else if (contentItem.type === 'list') {
+          templateSections += `
+        <ul>
+`;
+          for (const item of contentItem.items) {
+            const processedItem = processMarkdown(escapeHtml(item));
+            templateSections += `
+          <li>${processedItem}</li>
+`;
+          }
+          templateSections += `
+        </ul>
 `;
         }
       }
