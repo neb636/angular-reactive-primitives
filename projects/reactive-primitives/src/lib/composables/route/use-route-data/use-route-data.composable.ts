@@ -6,5 +6,5 @@ export const useRouteData = <T extends { [key: string]: any }>() => {
   const route = inject(ActivatedRoute);
   const routeData = toSignal(route.data, { initialValue: route.snapshot.data }) as Signal<T>;
 
-  return computed(() => routeData() || ({} as T));
+  return computed(() => routeData() ?? ({} as T));
 };
