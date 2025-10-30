@@ -5,28 +5,21 @@ Creates a signal that tracks whether the document/tab is visible or hidden. The 
 ## Usage
 
 ```ts
-import { Component, effect, viewChild, ElementRef } from '@angular/core';
 import { useDocumentVisibility } from 'angular-reactive-primitives';
 
 @Component({
-  selector: 'video-player',
-  template: `<video #videoEl src="https://example.com/video.mp4"></video> `,
+  template: `<h1>Tab currently visible: {{ isVisible() }}</h1>`,
 })
-export class VideoPlayerComponent {
-  videoEl = viewChild<ElementRef<HTMLVideoElement>>('videoEl');
+class ExampleComponent {
   isVisible = useDocumentVisibility();
-
-  constructor() {
-    // Pause video when tab no longer in view
-    effect(() => {
-      const video = this.videoEl()?.nativeElement;
-
-      if (this.isVisible()) {
-        video.play();
-      } else {
-        video.pause();
-      }
-    });
-  }
 }
 ```
+
+## Returns
+
+`Signal<boolean>`
+
+## Notes
+
+- Returned signal is **readonly** to prevent direct manipulation
+- Uses `createSharedComposable` internally so only there is only shared instance at a time and event listeners are torn down when no more subscribers.

@@ -20,13 +20,10 @@
 
 .documentation-section__heading {
   color: var(--Gray-80, #1e293b);
-
-  /* Text xl/SemiBold */
   font-family: 'Plus Jakarta Sans';
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
   line-height: 28px; /* 140% */
   letter-spacing: -0.2px;
-  margin-bottom: 4px;
 }

@@ -137,18 +137,24 @@ function getCategoryTitle(category) {
 }
 
 /**
- * Get subcategory title
+ * Convert kebab-case or snake_case to Title Case
+ * e.g., 'activated-route' -> 'Activated Route', 'use_route' -> 'Use Route'
+ */
+function toTitleCase(str) {
+  return str
+    .split(/[-_]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+/**
+ * Get subcategory title - dynamically converts subcategory name to title
  */
 function getSubcategoryTitle(subcategory) {
   if (!subcategory || subcategory === 'general') return null;
 
-  const titles = {
-    'activated-route': 'Activated Route',
-    browser: 'Browser',
-    storage: 'Storage',
-  };
-
-  return titles[subcategory] || subcategory;
+  // Convert kebab-case or snake_case to Title Case
+  return toTitleCase(subcategory);
 }
 
 /**

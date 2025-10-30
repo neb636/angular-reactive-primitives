@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '../../../common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '../../../common/layout/documentation-section/documentation-section.component';
 import { CodeBlockComponent } from '../../../common/components/code-block/code-block.component';
-
 @Component({
   selector: 'use-window-size-page',
   imports: [
@@ -13,27 +12,24 @@ import { CodeBlockComponent } from '../../../common/components/code-block/code-b
   template: `
     <documentation>
       <ng-container documentation-title>useWindowSize</ng-container>
-
-      <ng-container documentation-description>
-        Creates signals that track the window size (width and height). The signals update when the window is resized, with debouncing to prevent excessive updates.
-      </ng-container>
+      <p>Creates signals that track the window size (width and height). The signals update when the window is resized, with debouncing to prevent excessive updates.</p>
 
       <documentation-section>
         <ng-container section-title>Usage</ng-container>
 
-        <code-block [code]="code_usage_0" />
+        <code-block [code]="codeBlock1" [fileType]="'ts'" />
       </documentation-section>
 
       <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="useWindowSize Source" [code]="sourceCode" />
+        <ng-container section-title>Source</ng-container>
+        <code-block [code]="sourceCode" [fileType]="'ts'" />
       </documentation-section>
     </documentation>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UseWindowSizePageComponent {
-  code_usage_0 = `import { Component, computed } from '@angular/core';
+  codeBlock1 = `import { Component, computed } from '@angular/core';
 import { useWindowSize } from 'angular-reactive-primitives';
 
 @Component({
@@ -47,7 +43,6 @@ import { useWindowSize } from 'angular-reactive-primitives';
 export class SizeAwareComponent {
   windowSize = useWindowSize();
 }`;
-
   sourceCode = `import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { useDebouncedSignal } from '../../general/use-debounced-signal/use-debounced-signal.composable';

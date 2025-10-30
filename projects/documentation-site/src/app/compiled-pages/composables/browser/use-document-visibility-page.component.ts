@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '../../../common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '../../../common/layout/documentation-section/documentation-section.component';
 import { CodeBlockComponent } from '../../../common/components/code-block/code-block.component';
-
 @Component({
   selector: 'use-document-visibility-page',
   imports: [
@@ -13,51 +12,45 @@ import { CodeBlockComponent } from '../../../common/components/code-block/code-b
   template: `
     <documentation>
       <ng-container documentation-title>useDocumentVisibility</ng-container>
-
-      <ng-container documentation-description>
-        Creates a signal that tracks whether the document/tab is visible or hidden. The signal updates when the user switches tabs or minimizes the window.
-      </ng-container>
+      <p>Creates a signal that tracks whether the document/tab is visible or hidden. The signal updates when the user switches tabs or minimizes the window.</p>
 
       <documentation-section>
         <ng-container section-title>Usage</ng-container>
 
-        <code-block [code]="code_usage_0" />
+        <code-block [code]="codeBlock1" [fileType]="'ts'" />
       </documentation-section>
 
       <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="useDocumentVisibility Source" [code]="sourceCode" />
+        <ng-container section-title>Returns</ng-container>
+
+        <p><code>Signal&lt;boolean&gt;</code></p>
+      </documentation-section>
+
+      <documentation-section>
+        <ng-container section-title>Notes</ng-container>
+
+        <p>- Returned signal is <strong>readonly</strong> to prevent direct manipulation</p>
+
+        <p>- Uses <code>createSharedComposable</code> internally so only there is only shared instance at a time and event listeners are torn down when no more subscribers.</p>
+      </documentation-section>
+
+      <documentation-section>
+        <ng-container section-title>Source</ng-container>
+        <code-block [code]="sourceCode" [fileType]="'ts'" />
       </documentation-section>
     </documentation>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UseDocumentVisibilityPageComponent {
-  code_usage_0 = `import { Component, effect, viewChild, ElementRef } from '@angular/core';
-import { useDocumentVisibility } from 'angular-reactive-primitives';
+  codeBlock1 = `import { useDocumentVisibility } from 'angular-reactive-primitives';
 
 @Component({
-  selector: 'video-player',
-  template: \`<video #videoEl src="https://example.com/video.mp4"></video> \`,
+  template: \`<h1>Tab currently visible: {{ isVisible() }}</h1>\`,
 })
-export class VideoPlayerComponent {
-  videoEl = viewChild<ElementRef<HTMLVideoElement>>('videoEl');
+class ExampleComponent {
   isVisible = useDocumentVisibility();
-
-  constructor() {
-    // Pause video when tab no longer in view
-    effect(() => {
-      const video = this.videoEl()?.nativeElement;
-
-      if (this.isVisible()) {
-        video.play();
-      } else {
-        video.pause();
-      }
-    });
-  }
 }`;
-
   sourceCode = `import { Signal, signal, inject, DestroyRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';

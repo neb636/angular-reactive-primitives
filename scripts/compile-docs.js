@@ -40,6 +40,58 @@ function findDocMarkdownFiles(dir, files = []) {
 }
 
 /**
+ * Parse markdown table into rows and columns
+ */
+function parseTable(lines, startIndex) {
+  const tableLines = [];
+  let i = startIndex;
+  
+  // Read header row
+  if (i >= lines.length || !lines[i].includes('|')) {
+    return { table: null, nextIndex: startIndex };
+  }
+  
+  const headerCells = lines[i]
+    .split('|')
+    .map(cell => cell.trim())
+    .filter(cell => cell.length > 0);
+  
+  if (headerCells.length === 0) {
+    return { table: null, nextIndex: startIndex };
+  }
+  
+  tableLines.push(headerCells);
+  i++;
+  
+  // Skip header separator (|---|---|)
+  if (i < lines.length && lines[i].includes('|') && lines[i].includes('-')) {
+    i++;
+  }
+  
+  // Collect table rows
+  while (i < lines.length && lines[i].includes('|') && !lines[i].match(/^\s*\|[\s-|:]+\|\s*$/)) {
+    const cells = lines[i]
+      .split('|')
+      .map(cell => cell.trim())
+      .filter(cell => cell.length > 0);
+    if (cells.length > 0) {
+      tableLines.push(cells);
+    }
+    i++;
+  }
+  
+  if (tableLines.length === 0) {
+    return { table: null, nextIndex: startIndex };
+  }
+  
+  // First row is header
+  const columns = tableLines[0];
+  const rows = tableLines.slice(1);
+  
+  return { table: { columns, rows }, nextIndex: i };
+}
+
+/**
  * Parse markdown content into structured data
  */
 function parseMarkdown(content) {
@@ -61,10 +113,12 @@ function parseMarkdown(content) {
         // Start of code block
         isInCodeBlock = true;
         const language = line.slice(3).trim() || 'typescript';
+        // Map html to html, ts to typescript
+        const fileType = language === 'html' ? 'html' : language === 'ts' ? 'ts' : language;
         currentCodeBlock = {
-          language,
+          language: fileType === 'html' ? 'html' : fileType === 'ts' ? 'typescript' : language,
+          fileType: fileType,
           code: '',
-          title: '', // Will be set from previous context
         };
       } else {
         // End of code block
@@ -96,6 +150,8 @@ function parseMarkdown(content) {
         title: sectionTitle,
         content: [],
         codeBlocks: [],
+        table: null,
+        returns: null,
       };
       sections.push(currentSection);
       continue;
@@ -104,7 +160,6 @@ function parseMarkdown(content) {
     // Parse subsections (H3)
     if (line.startsWith('### ') && currentSection) {
       const subsectionTitle = line.slice(4).trim();
-      // Store subsection title - it will be used for the next code block
       currentSection.content.push({
         type: 'subsection',
         title: subsectionTitle,
@@ -125,6 +180,27 @@ function parseMarkdown(content) {
         description += ' ' + lines[j].trim();
         i = j;
         j++;
+      }
+      continue;
+    }
+
+    // Parse tables
+    if (currentSection && line.includes('|') && line.trim().startsWith('|')) {
+      const { table, nextIndex } = parseTable(lines, i);
+      if (table) {
+        currentSection.table = table;
+        i = nextIndex - 1; // -1 because loop will increment
+        continue;
+      }
+    }
+
+    // Parse Returns section (special handling for inline code)
+    // Capture all content until next section or empty line followed by section
+    if (currentSection && currentSection.title === 'Returns' && line.trim()) {
+      if (!currentSection.returns) {
+        currentSection.returns = line.trim();
+      } else {
+        currentSection.returns += ' ' + line.trim();
       }
       continue;
     }
@@ -174,27 +250,123 @@ function readSourceCode(sourceFilePath) {
 }
 
 /**
+ * Get subcategories for a given category by scanning directories
+ */
+function getSubcategoriesForCategory(category) {
+  const categoryPath = path.join(LIB_PATH, category);
+  
+  if (!fs.existsSync(categoryPath)) {
+    return [];
+  }
+
+  const entries = fs.readdirSync(categoryPath, { withFileTypes: true });
+  const subcategories = [];
+
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      // Check if this directory contains any .doc.md files (is a valid subcategory)
+      const subcategoryPath = path.join(categoryPath, entry.name);
+      const hasDocFiles = findDocMarkdownFiles(subcategoryPath).length > 0;
+      
+      if (hasDocFiles) {
+        subcategories.push(entry.name);
+      }
+    }
+  }
+
+  return subcategories;
+}
+
+/**
  * Determine category and subcategory from file path
  */
 function getCategoryFromPath(filePath) {
   const relativePath = path.relative(LIB_PATH, filePath);
   const parts = relativePath.split(path.sep);
 
-  let category = 'composables'; // default
-  let subcategory = 'general';
+  // Find the category (composables, effects, utils)
+  let category = null;
+  let categoryIndex = -1;
+  
+  for (let i = 0; i < parts.length; i++) {
+    if (['composables', 'effects', 'utils'].includes(parts[i])) {
+      category = parts[i];
+      categoryIndex = i;
+      break;
+    }
+  }
 
-  if (parts.includes('composables')) {
+  // Default to composables if not found
+  if (!category) {
     category = 'composables';
-    if (parts.includes('browser')) subcategory = 'browser';
-    else if (parts.includes('activated-route')) subcategory = 'activated-route';
-    else subcategory = 'general';
-  } else if (parts.includes('effects')) {
-    category = 'effects';
-  } else if (parts.includes('utils')) {
-    category = 'utils';
+    return { category, subcategory: 'general' };
+  }
+
+  // Only composables have subcategories (browser, route, general, etc.)
+  // Effects and utils don't have subcategories
+  if (category !== 'composables') {
+    return { category, subcategory: 'general' };
+  }
+
+  // Check if there's a subcategory (directory after composables)
+  let subcategory = 'general';
+  
+  if (categoryIndex + 1 < parts.length) {
+    const potentialSubcategory = parts[categoryIndex + 1];
+    
+    // Verify this is actually a subcategory directory by checking if it exists
+    const categoryPath = path.join(LIB_PATH, category);
+    const subcategoryPath = path.join(categoryPath, potentialSubcategory);
+    
+    if (fs.existsSync(subcategoryPath) && fs.statSync(subcategoryPath).isDirectory()) {
+      // Check if this subcategory contains .doc.md files
+      const hasDocFiles = findDocMarkdownFiles(subcategoryPath).length > 0;
+      
+      if (hasDocFiles) {
+        subcategory = potentialSubcategory;
+      }
+    }
   }
 
   return { category, subcategory };
+}
+
+/**
+ * Escape HTML entities for safe display in templates
+ */
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Convert markdown inline code to HTML
+ */
+function processInlineCode(text) {
+  // Replace `code` with <code>code</code>
+  return text.replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+/**
+ * Convert markdown bold to HTML
+ */
+function processMarkdownBold(text) {
+  // Replace **text** with <strong>text</strong>
+  return text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
+/**
+ * Process markdown formatting (code, bold, etc.)
+ */
+function processMarkdown(text) {
+  let result = text;
+  result = processMarkdownBold(result);
+  result = processInlineCode(result);
+  return result;
 }
 
 /**
@@ -209,11 +381,15 @@ function generateComponent(
 ) {
   const { title, description, sections } = parsed;
 
-  // Escape strings for TypeScript
+  // Escape strings for TypeScript template literals
   const escapeString = (str) => str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
 
   // Generate template sections
   let templateSections = '';
+  let codeBlockVars = '';
+  let tableVars = '';
+  let codeBlockIndex = 1; // Start from 1 to match user's example
+  let tableIndex = 0;
 
   for (const section of sections) {
     const sectionTitle = escapeString(section.title);
@@ -223,43 +399,110 @@ function generateComponent(
         <ng-container section-title>${sectionTitle}</ng-container>
 `;
 
-    // Extract subsection titles in order
-    const subsectionTitles = section.content
-      .filter((item) => item.type === 'subsection')
-      .map((item) => item.title);
+    // Handle Usage section with code blocks
+    if (section.title === 'Usage') {
+      for (let i = 0; i < section.codeBlocks.length; i++) {
+        const block = section.codeBlocks[i];
+        const varName = `codeBlock${codeBlockIndex}`;
+        const escapedCode = escapeString(block.code.trim());
+        const fileType = block.fileType || 'ts';
 
-    // Add code blocks with corresponding subsection titles
-    for (let i = 0; i < section.codeBlocks.length; i++) {
-      const block = section.codeBlocks[i];
-      const blockTitle =
-        subsectionTitles[i] || `${section.title} Example ${i + 1}`;
-      const varName = `code_${section.title.replace(/\s+/g, '_').toLowerCase()}_${i}`;
+        templateSections += `
+        <code-block [code]="${varName}" [fileType]="'${fileType}'" />
+`;
+
+        codeBlockVars += `  ${varName} = \`${escapedCode}\`;
+`;
+
+        codeBlockIndex++;
+      }
+    }
+    // Handle Parameters section with table
+    else if (section.title === 'Parameters' && section.table) {
+      const varName = `parametersTableRows`;
+      const columnsVarName = `parametersTableColumns`;
+      const { columns, rows } = section.table;
+
+      // Process rows to handle markdown formatting
+      const processedRows = rows.map(row => 
+        row.map(cell => processMarkdown(escapeHtml(cell)))
+      );
+      const processedColumns = columns.map(col => processMarkdown(escapeHtml(col)));
 
       templateSections += `
-        <code-block [code]="${varName}" />
+        <simple-table [rows]="${varName}" [columns]="${columnsVarName}"></simple-table>
 `;
+
+      tableVars += `  ${varName} = ${JSON.stringify(processedRows)};
+  ${columnsVarName} = ${JSON.stringify(processedColumns)};
+`;
+    }
+    // Handle Returns section
+    else if (section.title === 'Returns' && section.returns) {
+      const processedReturns = processMarkdown(escapeHtml(section.returns));
+      templateSections += `
+        <p>${processedReturns}</p>
+`;
+    }
+    // Handle Debounce vs Throttle section with table
+    else if (section.title === 'Debounce vs Throttle' && section.table) {
+      const varName = `debounceVsThrottleRows`;
+      const columnsVarName = `debounceVsThrottleColumns`;
+      const { columns, rows } = section.table;
+
+      // Process rows to handle markdown formatting
+      const processedRows = rows.map(row => 
+        row.map(cell => processMarkdown(escapeHtml(cell)))
+      );
+      const processedColumns = columns.map(col => processMarkdown(escapeHtml(col)));
+
+      templateSections += `
+        <simple-table [rows]="${varName}" [columns]="${columnsVarName}"></simple-table>
+`;
+      
+      tableVars += `  ${varName} = ${JSON.stringify(processedRows)};
+  ${columnsVarName} = ${JSON.stringify(processedColumns)};
+`;
+    }
+    // Handle regular sections with text content (but not if they have code blocks - those are handled below)
+    else if (section.content.length > 0 && section.codeBlocks.length === 0) {
+      for (const contentItem of section.content) {
+        if (contentItem.type === 'text') {
+          const processedText = processMarkdown(escapeHtml(contentItem.value));
+          templateSections += `
+        <p>${processedText}</p>
+`;
+        }
+      }
+    }
+    // Handle other sections with code blocks
+    else if (section.codeBlocks.length > 0) {
+      for (let i = 0; i < section.codeBlocks.length; i++) {
+        const block = section.codeBlocks[i];
+        const varName = `codeBlock${codeBlockIndex}`;
+        const escapedCode = escapeString(block.code.trim());
+        const fileType = block.fileType || 'ts';
+
+        templateSections += `
+        <code-block [code]="${varName}" [fileType]="'${fileType}'" />
+`;
+
+        codeBlockVars += `  ${varName} = \`${escapedCode}\`;
+`;
+
+        codeBlockIndex++;
+      }
     }
 
     templateSections += `      </documentation-section>
 `;
   }
 
-  // Generate code block variables
-  let codeBlockVars = '';
-  for (const section of sections) {
-    for (let i = 0; i < section.codeBlocks.length; i++) {
-      const block = section.codeBlocks[i];
-      const varName = `code_${section.title.replace(/\s+/g, '_').toLowerCase()}_${i}`;
-      const escapedCode = escapeString(block.code.trim());
-
-      codeBlockVars += `  ${varName} = \`${escapedCode}\`;
-
-`;
-    }
-  }
-
   // Generate source code variable
   const escapedSourceCode = escapeString(sourceCode);
+
+  // Check if any sections have tables
+  const hasTables = sections.some(section => section.table !== null);
 
   // Calculate relative path depth
   // All generated components are placed directly in their category/subcategory folder
@@ -273,36 +516,43 @@ function generateComponent(
   const pathDepth = levelsFromPages + 1; // +1 to get from pages to app
   const relativePath = '../'.repeat(pathDepth);
 
+  // Generate imports conditionally
+  let simpleTableImport = '';
+  let simpleTableImportItem = '';
+  
+  if (hasTables) {
+    simpleTableImport = `import { SimpleTableComponent } from '${relativePath}common/components/simple-table/simple-table.component';
+`;
+    simpleTableImportItem = `    SimpleTableComponent,
+`;
+  }
+
   const componentCode = `import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '${relativePath}common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '${relativePath}common/layout/documentation-section/documentation-section.component';
 import { CodeBlockComponent } from '${relativePath}common/components/code-block/code-block.component';
-
-@Component({
+${simpleTableImport}@Component({
   selector: '${componentName}',
   imports: [
     DocumentationComponent,
     DocumentationSectionComponent,
     CodeBlockComponent,
-  ],
+${simpleTableImportItem}  ],
   template: \`
     <documentation>
       <ng-container documentation-title>${escapeString(title)}</ng-container>
-
-      <ng-container documentation-description>
-        ${escapeString(description)}
-      </ng-container>
+      <p>${escapeHtml(description)}</p>
 ${templateSections}
       <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="${escapeString(title)} Source" [code]="sourceCode" />
+        <ng-container section-title>Source</ng-container>
+        <code-block [code]="sourceCode" [fileType]="'ts'" />
       </documentation-section>
     </documentation>
   \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ${toPascalCase(componentName)}Component {
-${codeBlockVars}  sourceCode = \`${escapedSourceCode}\`;
+${codeBlockVars}${tableVars}  sourceCode = \`${escapedSourceCode}\`;
 }
 `;
 

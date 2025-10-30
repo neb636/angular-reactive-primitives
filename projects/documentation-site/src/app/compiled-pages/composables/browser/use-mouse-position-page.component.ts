@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '../../../common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '../../../common/layout/documentation-section/documentation-section.component';
 import { CodeBlockComponent } from '../../../common/components/code-block/code-block.component';
-
 @Component({
   selector: 'use-mouse-position-page',
   imports: [
@@ -13,27 +12,24 @@ import { CodeBlockComponent } from '../../../common/components/code-block/code-b
   template: `
     <documentation>
       <ng-container documentation-title>useMousePosition</ng-container>
-
-      <ng-container documentation-description>
-        Creates signals that track the mouse position (x and y coordinates). The signals update when the mouse moves, with throttling to prevent excessive updates.
-      </ng-container>
+      <p>Creates signals that track the mouse position (x and y coordinates). The signals update when the mouse moves, with throttling to prevent excessive updates.</p>
 
       <documentation-section>
         <ng-container section-title>Usage</ng-container>
 
-        <code-block [code]="code_usage_0" />
+        <code-block [code]="codeBlock1" [fileType]="'ts'" />
       </documentation-section>
 
       <documentation-section>
-        <ng-container section-title>Source Code</ng-container>
-        <code-block title="useMousePosition Source" [code]="sourceCode" />
+        <ng-container section-title>Source</ng-container>
+        <code-block [code]="sourceCode" [fileType]="'ts'" />
       </documentation-section>
     </documentation>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UseMousePositionPageComponent {
-  code_usage_0 = `import { Component } from '@angular/core';
+  codeBlock1 = `import { Component } from '@angular/core';
 import { useMousePosition } from 'angular-reactive-primitives';
 
 @Component({
@@ -43,7 +39,6 @@ import { useMousePosition } from 'angular-reactive-primitives';
 export class CursorFollowerComponent {
   mousePosition = useMousePosition();
 }`;
-
   sourceCode = `import { signal, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { useThrottledSignal } from '../../general/use-throttled-signal/use-throttled-signal.composable';
