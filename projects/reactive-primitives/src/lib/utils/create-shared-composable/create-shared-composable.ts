@@ -2,21 +2,21 @@ import { DestroyRef, inject, Injector } from '@angular/core';
 
 type SharedComposableResult<T> = { value: T; cleanup?: () => void };
 
-export const createSharedComposable = <T>(
-  factory: () => SharedComposableResult<T>,
-): (() => T) => {
+export const createSharedComposable = <F extends (...args: any[]) => SharedComposableResult<any>>(
+  factory: F,
+): ((...args: Parameters<F>) => ReturnType<F>['value']) => {
   const cache = new WeakMap<
     Injector,
-    { result: SharedComposableResult<T>; refCount: number }
+    { result: ReturnType<F>; refCount: number }
   >();
 
-  return (): T => {
+  return (...args: Parameters<F>): ReturnType<F>['value'] => {
     const injector = inject(Injector);
     const destroyRef = inject(DestroyRef);
 
     if (!cache.has(injector)) {
       cache.set(injector, {
-        result: factory(),
+        result: factory(...args) as ReturnType<F>,
         refCount: 0,
       });
     }
