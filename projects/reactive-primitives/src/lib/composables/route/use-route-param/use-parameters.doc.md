@@ -5,23 +5,9 @@ A convenience function that returns a single route parameter as a signal. This i
 ## Usage
 
 ```ts
-import { Component, computed, inject } from '@angular/core';
 import { useRouteParameter } from 'angular-reactive-primitives';
 
-// Route: /products/:productId
-@Component({
-  selector: 'product-detail',
-  template: `
-    <div class="product">
-      @if (productResource.isLoading()) {
-        <p>Loading Product...</p>
-      } @else if (productResource.value()) {
-        <h1>{{ productResource.value().name }}</h1>
-        <p>{{ productResource.value().description }}</p>
-      }
-    </div>
-  `,
-})
+@Component({})
 export class ProductDetailComponent {
   productId = useRouteParameter<string>('productId');
   productService = inject(ProductService);

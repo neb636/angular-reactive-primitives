@@ -61,12 +61,26 @@ export class CodeBlockComponent {
   title = input<string | undefined>('');
   code = input<string | undefined>('');
   language = input<string>('typescript');
+  fileType = input<string | undefined>();
 
   private readonly sanitizer = inject(DomSanitizer);
 
   highlightedCode = computed<SafeHtml>(() => {
     const codeValue = this.code() || '';
-    const lang = this.language();
+    // Map fileType to language if provided, otherwise use language
+    const fileTypeValue = this.fileType();
+    let lang = this.language();
+    
+    if (fileTypeValue) {
+      // Map fileType to highlight.js language
+      if (fileTypeValue === 'html') {
+        lang = 'html';
+      } else if (fileTypeValue === 'ts') {
+        lang = 'typescript';
+      } else {
+        lang = fileTypeValue;
+      }
+    }
 
     if (!codeValue) {
       return '';

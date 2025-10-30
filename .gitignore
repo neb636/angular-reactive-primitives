@@ -18,5 +18,5 @@ npm-debug.log
 .env.local
 .idea
 
-projects/reference-app/src/app/compiled-pages
-projects/reference-app/src/app/generated-doc-routes.ts
+projects/documentation-site/src/app/compiled-pages
+projects/documentation-site/src/app/generated-doc-routes.ts

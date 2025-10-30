@@ -4,9 +4,8 @@ A collection of small, reusable reactive building blocks for modern Angular (v20
 
 ## 🚀 Features
 
-- 🎪 [**Interactive docs & demos**](https://vueuse.org)
-- ⚡ **Fully tree shakeable**: Only take what you want,
-- 🦾 **Type Strong**: Written in [TypeScript](https://www.typescriptlang.org/), with [TS Docs](https://github.com/microsoft/tsdoc)
+- **Fully tree shakeable**: Only take what you want
+- **Strongly typed**
 
 ## What you can do
 
@@ -54,7 +53,7 @@ npm run docs:dev
 ## Project structure
 
 - `projects/reactive-primitives` — library source and primitives
-- `projects/reference-app` — Documentation site
+- `projects/documentation-site` — Documentation site
 - `scripts` — internal scripts used to compile docs and generate routes
 
 ### Creating Documentation
@@ -78,9 +77,39 @@ npm run docs:dev
    ```
 
 4. The system automatically:
-   - Compiles your `.doc.md` into a component in `projects/reference-app/src/app/pages/`
+   - Compiles your `.doc.md` into a component in `projects/documentation-site/src/app/pages/`
    - Scans all generated components
    - Generates route definitions in `generated-doc-routes.ts`
+
+```bash
+# Compile markdown to components
+npm run compile:docs
+
+# Compile + dev server
+npm run docs:dev
+
+# Compile + production build
+npm run docs:build
+```
+
+## File Structure
+
+```
+projects/
+├── reactive-primitives/
+│   └── src/lib/
+│       └── composables/
+│           └── use-my-feature/
+│               ├── use-my-feature.composable.ts  # Implementation
+│               └── use-my-feature.doc.md         # Documentation
+│
+└── documentation-site/
+    └── src/app/
+        ├── app.routes.ts                         # Routes (manual)
+        └── pages/
+            └── composables/
+                └── use-my-feature-page.component.ts  # Generated!
+```
 
 ## Compatibility
 

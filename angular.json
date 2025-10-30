@@ -35,21 +35,21 @@
         }
       }
     },
-    "reference-app": {
+    "documentation-site": {
       "projectType": "application",
-      "root": "projects/reference-app",
-      "sourceRoot": "projects/reference-app/src",
+      "root": "projects/documentation-site",
+      "sourceRoot": "projects/documentation-site/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "tsConfig": "projects/reference-app/tsconfig.app.json",
-            "outputPath": "dist/reference-app",
-            "index": "projects/reference-app/src/index.html",
-            "browser": "projects/reference-app/src/main.ts",
-            "assets": ["projects/reference-app/src/assets"],
-            "styles": ["projects/reference-app/src/styles.css"],
+            "tsConfig": "projects/documentation-site/tsconfig.app.json",
+            "outputPath": "dist/documentation-site",
+            "index": "projects/documentation-site/src/index.html",
+            "browser": "projects/documentation-site/src/main.ts",
+            "assets": ["projects/documentation-site/src/assets"],
+            "styles": ["projects/documentation-site/src/styles.css"],
             "inlineStyleLanguage": "css"
           },
           "configurations": {
@@ -65,10 +65,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "reference-app:build:production"
+              "buildTarget": "documentation-site:build:production"
             },
             "development": {
-              "buildTarget": "reference-app:build:development"
+              "buildTarget": "documentation-site:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,8 +77,8 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/reference-app/**/*.ts",
-              "projects/reference-app/**/*.html"
+              "projects/documentation-site/**/*.ts",
+              "projects/documentation-site/**/*.html"
             ]
           }
         }
