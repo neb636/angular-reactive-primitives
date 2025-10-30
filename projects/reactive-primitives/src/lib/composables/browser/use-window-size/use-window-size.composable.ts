@@ -1,4 +1,4 @@
-import { Signal, signal, inject, DestroyRef } from '@angular/core';
+import { signal, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { useDebouncedSignal } from '../../general/use-debounced-signal/use-debounced-signal.composable';
 import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
@@ -23,13 +23,31 @@ export const useWindowSize = createSharedComposable(
   (debounceMs: number = 100) => {
     const document = inject(DOCUMENT);
 
-    const getWindowSize = (): WindowSize => ({
-      width: document.defaultView!.innerWidth,
-      height: document.defaultView!.innerHeight,
-    });
+    const getWindowSize = (): WindowSize => {
+      const win = document.defaultView;
+
+      if (win) {
+        return {
+          width: win.innerWidth,
+          height: win.innerHeight,
+        };
+      }
+
+      const root = document.documentElement;
+      return {
+        width: root?.clientWidth ?? 0,
+        height: root?.clientHeight ?? 0,
+      };
+    };
 
     const windowSizeSignal = signal<WindowSize>(getWindowSize());
-    const handleResize = () => windowSizeSignal.set(getWindowSize());
+    const handleResize = () => {
+      const next = getWindowSize();
+      const current = windowSizeSignal();
+      if (current.width !== next.width || current.height !== next.height) {
+        windowSizeSignal.set(next);
+      }
+    };
 
     // Listen for resize events
     document.defaultView?.addEventListener('resize', handleResize);
