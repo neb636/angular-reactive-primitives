@@ -380,6 +380,32 @@ function processMarkdownBold(text) {
 }
 
 /**
+ * Escape curly braces for Angular templates
+ * Angular interprets { and } as ICU message syntax, so we need to escape them
+ * Use {{ '{' }} and {{ '}' }} syntax for regular text
+ * Use HTML entities &#123; and &#125; for curly braces inside <code> tags
+ */
+function escapeAngularCurlyBraces(text) {
+  // Split by code tags to handle them separately
+  const parts = text.split(/(<code>.*?<\/code>)/g);
+  let result = '';
+  
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].startsWith('<code>') && parts[i].endsWith('</code>')) {
+      // Use HTML entities for curly braces inside code tags
+      const codeContent = parts[i];
+      const escapedCode = codeContent.replace(/{/g, '&#123;').replace(/}/g, '&#125;');
+      result += escapedCode;
+    } else {
+      // Use Angular interpolation syntax for curly braces in regular text
+      result += parts[i].replace(/{/g, "{{ '{' }}").replace(/}/g, "{{ '}' }}");
+    }
+  }
+  
+  return result;
+}
+
+/**
  * Process markdown formatting (code, bold, etc.)
  */
 function processMarkdown(text) {
@@ -459,7 +485,7 @@ function generateComponent(
     }
     // Handle Returns section
     else if (section.title === 'Returns' && section.returns) {
-      const processedReturns = processMarkdown(escapeHtml(section.returns));
+      const processedReturns = escapeAngularCurlyBraces(processMarkdown(escapeHtml(section.returns)));
       templateSections += `
         <p>${processedReturns}</p>
 `;
@@ -488,7 +514,7 @@ function generateComponent(
     else if (section.content.length > 0 && section.codeBlocks.length === 0) {
       for (const contentItem of section.content) {
         if (contentItem.type === 'text') {
-          const processedText = processMarkdown(escapeHtml(contentItem.value));
+          const processedText = escapeAngularCurlyBraces(processMarkdown(escapeHtml(contentItem.value)));
           templateSections += `
         <p>${processedText}</p>
 `;
@@ -497,7 +523,7 @@ function generateComponent(
         <ul>
 `;
           for (const item of contentItem.items) {
-            const processedItem = processMarkdown(escapeHtml(item));
+            const processedItem = escapeAngularCurlyBraces(processMarkdown(escapeHtml(item)));
             templateSections += `
           <li>${processedItem}</li>
 `;
@@ -574,7 +600,7 @@ ${simpleTableImportItem}  ],
   template: \`
     <documentation>
       <ng-container documentation-title>${escapeString(title)}</ng-container>
-      <p>${escapeHtml(description)}</p>
+      <p>${escapeAngularCurlyBraces(escapeHtml(description))}</p>
 ${templateSections}
       <documentation-section>
         <ng-container section-title>Source</ng-container>
