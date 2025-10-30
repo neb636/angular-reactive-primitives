@@ -2,10 +2,15 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationSidebarComponent } from './common/components/navigation-sidebar/navigation-sidebar.component';
 import { DocumentationHeaderComponent } from './common/components/documentation-header/documentation-header.component';
+import { scrollToFragmentOnUpdateEffect } from './common/effects/scroll-to-fragment-on-update/scroll-to-fragment-on-update.effect';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, DocumentationHeaderComponent, NavigationSidebarComponent],
+  imports: [
+    RouterOutlet,
+    DocumentationHeaderComponent,
+    NavigationSidebarComponent,
+  ],
   template: `
     <div class="app-root">
       <documentation-header />
@@ -22,4 +27,6 @@ import { DocumentationHeaderComponent } from './common/components/documentation-
   styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {}
+export class AppComponent {
+  scrollToFragmentOnUpdateEffect = scrollToFragmentOnUpdateEffect();
+}

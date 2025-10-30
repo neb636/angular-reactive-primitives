@@ -1,16 +1,17 @@
+import { useRouteFragment } from './../../../../../../reactive-primitives/src/lib/composables/route/use-route-fragment/use-route-fragment.composable';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 export interface PageSection {
   id: string;
   title: string;
-  element?: HTMLElement;
 }
 
 @Component({
   selector: 'on-this-page',
   styleUrls: ['./on-this-page.component.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="on-this-page">
@@ -19,10 +20,12 @@ export interface PageSection {
         @for (section of sections(); track section.id) {
           <li class="on-this-page__item">
             <a
-              [href]="'#' + section.id"
               class="on-this-page__link"
-              [class.on-this-page__link--active]="activeSection() === section.id"
-              (click)="scrollToSection($event, section.id)"
+              [class.on-this-page__link--active]="
+                routeFragment() === section.id
+              "
+              [routerLink]="[]"
+              [fragment]="section.id"
             >
               {{ section.title }}
             </a>
@@ -30,7 +33,7 @@ export interface PageSection {
         }
       </ul>
       @if (sections().length > 0) {
-        <button class="on-this-page__back-to-top" (click)="scrollToTop($event)">
+        <button class="on-this-page__back-to-top" (click)="scrollToTop()">
           ↑ Back to top
         </button>
       }
@@ -38,22 +41,11 @@ export interface PageSection {
   `,
 })
 export class OnThisPageComponent {
-  // Inputs as signals for declarative data flow
+  routeFragment = useRouteFragment();
+
   sections = input<PageSection[]>([]);
-  activeSection = input<string>('');
 
-  scrollToSection(event: Event, sectionId: string) {
-    event.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const yOffset = -20;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  }
-
-  scrollToTop(event: Event) {
-    event.preventDefault();
+  scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

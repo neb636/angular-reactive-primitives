@@ -1,5 +1,8 @@
 :host {
+  position: fixed;
+  top: 0;
   display: block;
+  padding-top: 114px;
 }
 
 .on-this-page {

@@ -1,9 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {
-  OnThisPageComponent,
-  PageSection,
-} from '../../components/on-this-page/on-this-page.component';
-
 @Component({
   selector: 'documentation',
   imports: [],
@@ -18,7 +13,9 @@ import {
         </p>
       </div>
 
-      <div class="documentation__content" #content></div>
+      <div class="documentation__content" #content>
+        <ng-content></ng-content>
+      </div>
     </div>
 
     <aside class="documentation__sidebar">

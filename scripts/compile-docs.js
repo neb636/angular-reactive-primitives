@@ -352,6 +352,18 @@ function getCategoryFromPath(filePath) {
 }
 
 /**
+ * Slugify text for use in IDs
+ */
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
  * Escape HTML entities for safe display in templates
  */
 function escapeHtml(str) {
@@ -436,12 +448,15 @@ function generateComponent(
   let tableVars = '';
   let codeBlockIndex = 1; // Start from 1 to match user's example
   let tableIndex = 0;
+  const sectionData = []; // Collect section data for the sections array
 
   for (const section of sections) {
     const sectionTitle = escapeString(section.title);
+    const sectionId = slugify(section.title);
+    sectionData.push({ id: sectionId, title: section.title });
 
     templateSections += `
-      <documentation-section>
+      <documentation-section id="${sectionId}">
         <ng-container section-title>${sectionTitle}</ng-container>
 `;
 
@@ -560,6 +575,10 @@ function generateComponent(
   // Generate source code variable
   const escapedSourceCode = escapeString(sourceCode);
 
+  // Add Source section ID
+  const sourceSectionId = slugify('Source');
+  sectionData.push({ id: sourceSectionId, title: 'Source' });
+
   // Check if any sections have tables
   const hasTables = sections.some(section => section.table !== null);
 
@@ -586,31 +605,48 @@ function generateComponent(
 `;
   }
 
+  // Generate sections array as array of objects with id and title
+  // Escape single quotes for TypeScript string literals
+  const escapeSingleQuotes = (str) => str.replace(/'/g, "\\'");
+  const sectionsArray = sectionData.map(s => {
+    const escapedTitle = escapeSingleQuotes(s.title);
+    return `  {\n    id: '${s.id}',\n    title: '${escapedTitle}',\n  }`;
+  }).join(',\n');
+
   const componentCode = `import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '${relativePath}common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '${relativePath}common/layout/documentation-section/documentation-section.component';
 import { CodeBlockComponent } from '${relativePath}common/components/code-block/code-block.component';
+import { OnThisPageComponent } from '${relativePath}common/components/on-this-page/on-this-page.component';
 ${simpleTableImport}@Component({
   selector: '${componentName}',
   imports: [
     DocumentationComponent,
     DocumentationSectionComponent,
     CodeBlockComponent,
+    OnThisPageComponent,
 ${simpleTableImportItem}  ],
   template: \`
     <documentation>
       <ng-container documentation-title>${escapeString(title)}</ng-container>
       <p>${escapeAngularCurlyBraces(escapeHtml(description))}</p>
 ${templateSections}
-      <documentation-section>
+      <documentation-section id="${sourceSectionId}">
         <ng-container section-title>Source</ng-container>
         <code-block [code]="sourceCode" [fileType]="'ts'" />
       </documentation-section>
+
+      <ng-container sidebar-right>
+        <on-this-page [sections]="sections" />
+      </ng-container>
     </documentation>
   \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ${toPascalCase(componentName)}Component {
+  sections = [
+  ${sectionsArray}
+  ];
 ${codeBlockVars}${tableVars}  sourceCode = \`${escapedSourceCode}\`;
 }
 `;
