@@ -27,7 +27,7 @@ export function usePreviousSignal<T>(sourceSignal: Signal<T>): Signal<T | undefi
       previousSignal.set(lastValue);
       lastValue = currentValue;
     }
-  }, { allowSignalWrites: true });
+  });
 
   return previousSignal.asReadonly();
 }
