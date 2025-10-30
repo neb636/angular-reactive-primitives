@@ -1,4 +1,4 @@
-import { Signal, computed, signal } from '@angular/core';
+import { Signal, effect, signal } from '@angular/core';
 
 /*
  * Creates a signal that tracks the previous value of a source signal. Useful for comparing
@@ -20,14 +20,14 @@ export function usePreviousSignal<T>(sourceSignal: Signal<T>): Signal<T | undefi
   const previousSignal = signal<T | undefined>(undefined);
   let lastValue = sourceSignal();
 
-  return computed(() => {
+  // Track changes via effect to avoid side effects inside computed
+  effect(() => {
     const currentValue = sourceSignal();
-
     if (currentValue !== lastValue) {
       previousSignal.set(lastValue);
       lastValue = currentValue;
     }
-
-    return previousSignal();
   });
+
+  return previousSignal.asReadonly();
 }
