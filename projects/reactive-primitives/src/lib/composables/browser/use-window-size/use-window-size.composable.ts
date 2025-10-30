@@ -23,10 +23,22 @@ export const useWindowSize = createSharedComposable(
   (debounceMs: number = 100) => {
     const document = inject(DOCUMENT);
 
-    const getWindowSize = (): WindowSize => ({
-      width: document.defaultView!.innerWidth,
-      height: document.defaultView!.innerHeight,
-    });
+    const getWindowSize = (): WindowSize => {
+      const defaultView = document.defaultView;
+      if (defaultView) {
+        return {
+          width: defaultView.innerWidth,
+          height: defaultView.innerHeight,
+        };
+      }
+
+      // Fallback for environments where defaultView is null (e.g., SSR)
+      const documentElement = document.documentElement as HTMLElement | null;
+      return {
+        width: documentElement?.clientWidth ?? 0,
+        height: documentElement?.clientHeight ?? 0,
+      };
+    };
 
     const windowSizeSignal = signal<WindowSize>(getWindowSize());
     const handleResize = () => windowSizeSignal.set(getWindowSize());
