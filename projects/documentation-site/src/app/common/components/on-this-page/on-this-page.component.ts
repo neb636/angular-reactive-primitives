@@ -32,20 +32,10 @@ export interface PageSection {
           </li>
         }
       </ul>
-      @if (sections().length > 0) {
-        <button class="on-this-page__back-to-top" (click)="scrollToTop()">
-          ↑ Back to top
-        </button>
-      }
     </nav>
   `,
 })
 export class OnThisPageComponent {
   routeFragment = useRouteFragment();
-
   sections = input<PageSection[]>([]);
-
-  scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 }

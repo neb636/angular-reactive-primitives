@@ -18,7 +18,7 @@
   }
 }
 
-.documentation-section__heading {
+h2.documentation-section__heading {
   color: var(--Gray-80, #1e293b);
   font-family: 'Plus Jakarta Sans';
   font-size: 20px;
@@ -26,4 +26,5 @@
   font-weight: 600;
   line-height: 28px; /* 140% */
   letter-spacing: -0.2px;
+  margin: 8px 0 15px;
 }
