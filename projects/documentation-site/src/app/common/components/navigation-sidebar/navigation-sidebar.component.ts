@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
+import { Route } from '@angular/router';
 import { NAVIGATION_ROUTES } from '../../../app.routes';
 import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav-menu.component';
 
@@ -35,11 +41,13 @@ import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav
           type="text"
           placeholder="Search anything..."
           class="search-input"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
         />
       </div>
 
       <nav class="navigation-sidebar__menu-container">
-        @for (section of NAVIGATION_ROUTES; track section.path) {
+        @for (section of filteredRoutes(); track section.path) {
           <expandable-nav-menu [section]="section"></expandable-nav-menu>
         }
       </nav>
@@ -50,4 +58,49 @@ import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav
 })
 export class NavigationSidebarComponent {
   readonly NAVIGATION_ROUTES = NAVIGATION_ROUTES;
+  readonly searchQuery = signal('');
+
+  onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchQuery.set(target.value);
+  }
+
+  readonly filteredRoutes = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+
+    if (!query) {
+      return NAVIGATION_ROUTES;
+    }
+
+    return NAVIGATION_ROUTES.map((section) => {
+      const sectionTitle = (section.title || '').toLowerCase();
+      const sectionPath = (section.path || '').toLowerCase();
+      const sectionMatches =
+        sectionTitle.includes(query) || sectionPath.includes(query);
+
+      // Filter children that match the query
+      const matchingChildren =
+        section.children?.filter((child) => {
+          const childTitle = (child.title || '').toLowerCase();
+          const childPath = (child.path || '').toLowerCase();
+          return childTitle.includes(query) || childPath.includes(query);
+        }) || [];
+
+      // If section matches, show all children
+      if (sectionMatches) {
+        return section;
+      }
+
+      // If section doesn't match but has matching children, return section with filtered children
+      if (matchingChildren.length > 0) {
+        return {
+          ...section,
+          children: matchingChildren,
+        };
+      }
+
+      // Return null for sections that don't match (will be filtered out)
+      return null;
+    }).filter((section): section is Route => section !== null);
+  });
 }
