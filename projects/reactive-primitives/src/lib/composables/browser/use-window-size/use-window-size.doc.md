@@ -19,10 +19,24 @@ class ResponsiveComponent {
 }
 ```
 
+### With Custom Debounce
+
+```ts
+@Component({
+  template: `<p>
+    Window: {{ windowSize().width }}px × {{ windowSize().height }}px
+  </p>`,
+})
+class SlowDebounceComponent {
+  // Use a longer debounce for less frequent updates
+  windowSize = useWindowSize(300);
+}
+```
+
 ## Parameters
 
-| Parameter    | Type     | Default | Description                          |
-| ------------ | -------- | ------- | ------------------------------------ |
+| Parameter    | Type     | Default | Description                           |
+| ------------ | -------- | ------- | ------------------------------------- |
 | `debounceMs` | `number` | `100`   | Debounce delay for resize events (ms) |
 
 ## Returns
@@ -32,6 +46,7 @@ class ResponsiveComponent {
 ## Notes
 
 - Returned signal is **readonly** to prevent direct manipulation
-- Uses `createSharedComposable` internally so only one instance with shared event listeners exists
+- Uses `createSharedComposable` internally - components with the same `debounceMs` value share a single instance
+- Different `debounceMs` values create separate instances with their own event listeners
 - Debounces resize events by default (100ms) to prevent excessive updates
 - Event listeners are automatically cleaned up when no more subscribers
