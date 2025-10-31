@@ -13,7 +13,7 @@ const path = require('path');
 // Paths
 const LIB_PATH = path.join(
   __dirname,
-  '../projects/reactive-primitives/src/lib',
+  '../projects/angular-reactive-primitives/src/lib',
 );
 const PAGES_PATH = path.join(
   __dirname,
