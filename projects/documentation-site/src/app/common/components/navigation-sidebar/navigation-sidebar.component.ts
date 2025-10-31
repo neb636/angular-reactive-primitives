@@ -2,15 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   signal,
 } from '@angular/core';
 import { Route } from '@angular/router';
+import { useThrottledSignal } from 'reactive-primitives';
 import { NAVIGATION_ROUTES } from '../../../app.routes';
 import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav-menu.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'navigation-sidebar',
-  imports: [ExpandableNavMenuComponent],
+  imports: [ExpandableNavMenuComponent, FormsModule],
   template: `
     <aside class="navigation-sidebar">
       <div class="search-container">
@@ -41,8 +44,7 @@ import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav
           type="text"
           placeholder="Search anything..."
           class="search-input"
-          [value]="searchQuery()"
-          (input)="onSearchInput($event)"
+          [(ngModel)]="searchQuery"
         />
       </div>
 
@@ -57,50 +59,65 @@ import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationSidebarComponent {
-  readonly NAVIGATION_ROUTES = NAVIGATION_ROUTES;
-  readonly searchQuery = signal('');
+  searchQuery = signal('');
+  throttledQuery = useThrottledSignal(this.searchQuery, 400);
 
-  onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchQuery.set(target.value);
-  }
-
-  readonly filteredRoutes = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
+  filteredRoutes = computed(() => {
+    const query = this.throttledQuery().toLowerCase().trim();
 
     if (!query) {
       return NAVIGATION_ROUTES;
     }
 
     return NAVIGATION_ROUTES.map((section) => {
-      const sectionTitle = (section.title || '').toLowerCase();
-      const sectionPath = (section.path || '').toLowerCase();
-      const sectionMatches =
-        sectionTitle.includes(query) || sectionPath.includes(query);
+      // Filter children recursively, keeping categories with matching leaf nodes
+      const filteredChildren = this.filterChildren(
+        section.children || [],
+        query,
+      );
 
-      // Filter children that match the query
-      const matchingChildren =
-        section.children?.filter((child) => {
-          const childTitle = (child.title || '').toLowerCase();
-          const childPath = (child.path || '').toLowerCase();
-          return childTitle.includes(query) || childPath.includes(query);
-        }) || [];
-
-      // If section matches, show all children
-      if (sectionMatches) {
-        return section;
-      }
-
-      // If section doesn't match but has matching children, return section with filtered children
-      if (matchingChildren.length > 0) {
+      // Include section if it has filtered children
+      if (filteredChildren.length > 0) {
         return {
           ...section,
-          children: matchingChildren,
+          children: filteredChildren,
         };
       }
 
-      // Return null for sections that don't match (will be filtered out)
+      // Return null for sections with no matching children (will be filtered out)
       return null;
-    }).filter((section): section is Route => section !== null);
+    }).filter((section) => section !== null) as Route[];
   });
+
+  private filterChildren(children: Route[], query: string): Route[] {
+    return children
+      .map((child) => {
+        const isLeaf = !!child.component;
+
+        if (isLeaf) {
+          // For leaf nodes, check if they match the query
+          const childTitle = ((child.title as string) || '').toLowerCase();
+          const childPath = (child.path || '').toLowerCase();
+          const matches =
+            childTitle.includes(query) || childPath.includes(query);
+          return matches ? child : null;
+        } else if (child.children) {
+          // For categories, recursively filter their children
+          const filteredSubchildren = this.filterChildren(
+            child.children,
+            query,
+          );
+          // Keep category only if it has matching children
+          return filteredSubchildren.length > 0
+            ? {
+                ...child,
+                children: filteredSubchildren,
+              }
+            : null;
+        }
+
+        return null;
+      })
+      .filter((child) => child !== null) as Route[];
+  }
 }
