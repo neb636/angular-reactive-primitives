@@ -11,21 +11,25 @@ import { DocumentationComponent } from '../../../common/layout/documentation/doc
     <documentation>
       <ng-container documentation-title>Angular Reactive Primitives</ng-container>
       <ng-container documentation-description>
-        A collection of composables and effects for modern Angular applications using reactive
-        patterns. These utilities help you build more maintainable and testable applications with
-        less boilerplate.
+        A utility library of small, composable building blocks for modern reactive Angular 20+
+        applications. Built on Angular's simple and powerful signal implementation, these primitives
+        extend Angular's base reactivity with focused helper functions that compose seamlessly
+        together.
       </ng-container>
 
       <documentation-section>
         <ng-container section-title>What are Reactive Primitives?</ng-container>
         <p>
-          Reactive Primitives are small, focused utilities that provide common reactive patterns for
-          Angular applications. They are designed to work seamlessly with Angular's signal-based
-          reactivity system and provide a consistent API for common use cases.
+          Reactive Primitives are generic building blocks—small utility functions and effects—that
+          extend Angular's signal-based reactivity system. Rather than solving specific use cases,
+          these primitives provide flexible, extendable foundations that you can compose to build
+          exactly what your application needs.
         </p>
         <p>
-          Each primitive is a standalone function that can be imported and used in your components,
-          making them easy to test and reuse across your application.
+          Angular's signal implementation is simple and powerful. This library builds on that
+          foundation with focused helpers that integrate naturally with Angular's existing
+          reactivity model. Each primitive is a standalone function that can be imported and used
+          independently, making them easy to test, reuse, and combine across your application.
         </p>
       </documentation-section>
 
@@ -34,16 +38,33 @@ import { DocumentationComponent } from '../../../common/layout/documentation/doc
 
         <ul>
           <li>
-            <strong>Signal-based:</strong> Built on Angular's signal system for optimal performance
+            <strong>Small & Focused:</strong> Each primitive does one thing well, encouraging clear
+            composition over heavy abstractions
+          </li>
+          <li>
+            <strong>Flexible:</strong> Generic building blocks that adapt to your specific needs
+            rather than prescribing solutions
+          </li>
+          <li>
+            <strong>Extendable:</strong> Built on Angular's signals and effects, easily customized
+            and extended for your use cases
+          </li>
+          <li>
+            <strong>Signal-based:</strong> Leverages Angular's signal system for optimal
+            performance and reactivity
+          </li>
+          <li>
+            <strong>SSR Compatible:</strong> Designed to work seamlessly with Angular's server-side
+            rendering capabilities
           </li>
           <li>
             <strong>Type-safe:</strong> Full TypeScript support with comprehensive type definitions
           </li>
-          <li><strong>Tree-shakable:</strong> Import only what you need</li>
+          <li><strong>Tree-shakable:</strong> Import only what you need, keep bundles lean</li>
           <li>
-            <strong>Framework agnostic:</strong> Work with any Angular version that supports signals
+            <strong>Modern Angular:</strong> Built for Angular 20+ with reactive/functional
+            approaches and composables
           </li>
-          <li><strong>Well-tested:</strong> Comprehensive test coverage for reliability</li>
         </ul>
       </documentation-section>
 
