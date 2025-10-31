@@ -1,10 +1,12 @@
-import { Signal, signal, inject, DestroyRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Signal, signal, inject, DestroyRef, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
 
 /*
  * Creates a signal that tracks whether the document/tab is visible or hidden.
  * The signal updates when the user switches tabs or minimizes the window.
+ *
+ * On the server, returns `true` (visible) by default and updates to actual value once hydrated on the client.
  *
  * Example:
  *
@@ -19,23 +21,33 @@ import { createSharedComposable } from '../../../utils/create-shared-composable/
  */
 export const useDocumentVisibility = createSharedComposable(() => {
   const document = inject(DOCUMENT);
+  const platformId = inject(PLATFORM_ID);
+  const isBrowser = isPlatformBrowser(platformId);
 
-  const visibilitySignal = signal<boolean>(!document.hidden);
+  // On server, default to visible (true). On client, use actual document.hidden state
+  const getInitialVisibility = () => (isBrowser ? !document.hidden : true);
+
+  const visibilitySignal = signal<boolean>(getInitialVisibility());
+
   const handleVisibilityChange = () => visibilitySignal.set(!document.hidden);
 
-  // Listen for visibility change events
-  document.defaultView?.addEventListener(
-    'visibilitychange',
-    handleVisibilityChange,
-  );
+  // Only set up event listeners in the browser
+  if (isBrowser && document.defaultView) {
+    document.defaultView.addEventListener(
+      'visibilitychange',
+      handleVisibilityChange,
+    );
+  }
 
   return {
     value: visibilitySignal.asReadonly(),
     cleanup: () => {
-      document.defaultView?.removeEventListener(
-        'visibilitychange',
-        handleVisibilityChange,
-      );
+      if (isBrowser && document.defaultView) {
+        document.defaultView.removeEventListener(
+          'visibilitychange',
+          handleVisibilityChange,
+        );
+      }
     },
   };
 });
