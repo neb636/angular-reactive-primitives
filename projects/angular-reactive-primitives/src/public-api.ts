@@ -1,5 +1,5 @@
 /*
- * Public API Surface of reactive-primitives
+ * Public API Surface of angular-reactive-primitives
  */
 
 // Activated Route Composables

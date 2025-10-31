@@ -1,5 +1,5 @@
 /**
- * Documentation metadata types for the reactive-primitives library.
+ * Documentation metadata types for the angular-reactive-primitives library.
  * These types are used to define documentation for composables, effects, and utils.
  */
 

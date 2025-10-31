@@ -12,9 +12,9 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "paths": {
-      "reactive-primitives": [
-        "./projects/reactive-primitives/src/public-api",
-        "./dist/reactive-primitives"
+      "angular-reactive-primitives": [
+        "./projects/angular-reactive-primitives/src/public-api",
+        "./dist/angular-reactive-primitives"
       ]
     },
     "importHelpers": true,
@@ -31,10 +31,10 @@
   "files": [],
   "references": [
     {
-      "path": "./projects/reactive-primitives/tsconfig.lib.json"
+      "path": "./projects/angular-reactive-primitives/tsconfig.lib.json"
     },
     {
-      "path": "./projects/reactive-primitives/tsconfig.spec.json"
+      "path": "./projects/angular-reactive-primitives/tsconfig.spec.json"
     }
   ]
 }

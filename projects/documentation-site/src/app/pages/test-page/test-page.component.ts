@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { useWindowSize } from 'reactive-primitives';
+import { useWindowSize } from 'angular-reactive-primitives';
 import {
   TabGroupComponent,
   TabComponent,

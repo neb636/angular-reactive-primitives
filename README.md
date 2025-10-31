@@ -52,7 +52,7 @@ npm run docs:dev
 
 ## Project structure
 
-- `projects/reactive-primitives` — library source and primitives
+- `projects/angular-reactive-primitives` — library source and primitives
 - `projects/documentation-site` — Documentation site
 - `scripts` — internal scripts used to compile docs and generate routes
 
@@ -61,7 +61,7 @@ npm run docs:dev
 1. Create a `.doc.md` file next to your library source file:
 
    ```
-   projects/reactive-primitives/src/lib/
+   projects/angular-reactive-primitives/src/lib/
      composables/
        my-feature/
          my-feature.composable.ts
@@ -96,7 +96,7 @@ npm run docs:build
 
 ```
 projects/
-├── reactive-primitives/
+├── angular-reactive-primitives/
 │   └── src/lib/
 │       └── composables/
 │           └── use-my-feature/

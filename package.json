@@ -1,14 +1,14 @@
 {
-  "name": "angular-reactive-creation",
+  "name": "angular-reactive-primitives",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve documentation-site",
-    "build": "ng build reactive-primitives",
+    "build": "ng build angular-reactive-primitives",
     "build:documentation-site": "ng build documentation-site",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint documentation-site && ng lint reactive-primitives",
+    "lint": "ng lint documentation-site && ng lint angular-reactive-primitives",
     "compile:docs": "node scripts/compile-docs.js",
     "generate:routes": "node scripts/generate-routes.js",
     "build:docs": "npm run compile:docs && npm run generate:routes",

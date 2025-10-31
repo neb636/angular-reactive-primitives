@@ -5,17 +5,17 @@ This package contains the source for the Angular reactive primitives library. It
 ## Build
 
 ```bash
-ng build reactive-primitives
+ng build angular-reactive-primitives
 ```
 
-Build artifacts are output to `dist/reactive-primitives`.
+Build artifacts are output to `dist/angular-reactive-primitives`.
 
 ## Publish (optional)
 
 After building, you can publish the library when ready:
 
 ```bash
-cd dist/reactive-primitives
+cd dist/angular-reactive-primitives
 npm publish
 ```
 
