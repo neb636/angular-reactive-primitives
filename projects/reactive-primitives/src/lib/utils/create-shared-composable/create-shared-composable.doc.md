@@ -4,6 +4,8 @@ Creates a composable that shares a single instance per injector with reference c
 
 ## Usage
 
+### Basic Usage (No Parameters)
+
 ```ts
 import { createSharedComposable } from 'angular-reactive-primitives';
 
@@ -12,7 +14,7 @@ const useWebSocket = createSharedComposable(() => {
   const messages = signal<string[]>([]);
 
   socket.onmessage = (event) => {
-    messages.update(m => [...m, event.data]);
+    messages.update((m) => [...m, event.data]);
   };
 
   return {
@@ -33,15 +35,54 @@ class ComponentB {
 }
 ```
 
+### With Parameters
+
+The factory function can accept parameters. Different parameter values create separate cached instances, while the same parameter values share a single instance.
+
+```ts
+const useWindowSize = createSharedComposable((debounceMs = 100) => {
+  const document = inject(DOCUMENT);
+  const size = signal(getCurrentSize());
+
+  const handleResize = () => size.set(getCurrentSize());
+  document.defaultView?.addEventListener('resize', handleResize);
+
+  return {
+    value: useDebouncedSignal(size, debounceMs),
+    cleanup: () => {
+      document.defaultView?.removeEventListener('resize', handleResize);
+    },
+  };
+});
+
+@Component({})
+class ComponentA {
+  // Creates first instance with 200ms debounce
+  windowSize = useWindowSize(200);
+}
+
+@Component({})
+class ComponentB {
+  // Shares the same instance as ComponentA (both use 200ms)
+  windowSize = useWindowSize(200);
+}
+
+@Component({})
+class ComponentC {
+  // Creates a separate instance with 500ms debounce
+  windowSize = useWindowSize(500);
+}
+```
+
 ## Parameters
 
-| Parameter | Type                                                      | Default    | Description                               |
-| --------- | --------------------------------------------------------- | ---------- | ----------------------------------------- |
-| `factory` | `() => { value: T; cleanup?: () => void }`                | _required_ | Factory function that creates the shared resource |
+| Parameter | Type                                              | Default    | Description                                                                   |
+| --------- | ------------------------------------------------- | ---------- | ----------------------------------------------------------------------------- |
+| `factory` | `(...args) => { value: T; cleanup?: () => void }` | _required_ | Factory function that creates the shared resource. Can accept any parameters. |
 
 ## Returns
 
-`() => T` - A composable function that returns the shared value
+`(...args) => T` - A composable function that accepts the same parameters as the factory and returns the shared value
 
 ## Notes
 
@@ -50,3 +91,8 @@ class ComponentB {
 - The `cleanup` function is optional but recommended for proper resource cleanup
 - Uses `WeakMap` internally to ensure garbage collection
 - Different from `createSingletonComposable` which never cleans up the instance
+- **When using parameters**:
+  - Different parameter values create separate cached instances
+  - Same parameter values share a single instance
+  - Parameters must be JSON-serializable (primitives, arrays, plain objects)
+  - Functions, symbols, and circular references are not supported as parameters
