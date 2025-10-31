@@ -2,6 +2,8 @@
 alwaysApply: true
 ---
 
+In general its good to dogfood our reactive-primitives library and use the exported functions when it makes sense.
+
 - Skip setting standalone in components, directives, and pipes
 - Use signals for state management
 - Implement lazy loading for feature routes

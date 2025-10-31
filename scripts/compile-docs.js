@@ -205,6 +205,26 @@ function parseMarkdown(content) {
       continue;
     }
 
+    // Parse bullet lists (lines starting with "- ")
+    if (currentSection && line.trim().startsWith('- ')) {
+      const listItems = [];
+      let j = i;
+      
+      // Collect consecutive bullet items
+      while (j < lines.length && lines[j].trim().startsWith('- ')) {
+        const itemText = lines[j].trim().slice(2).trim(); // Remove "- " prefix
+        listItems.push(itemText);
+        j++;
+      }
+      
+      // Add list as a single content item
+      if (listItems.length > 0) {
+        currentSection.content.push({ type: 'list', items: listItems });
+        i = j - 1; // -1 because loop will increment
+        continue;
+      }
+    }
+
     // Add content to current section
     if (currentSection && line.trim()) {
       currentSection.content.push({ type: 'text', value: line.trim() });
@@ -332,6 +352,18 @@ function getCategoryFromPath(filePath) {
 }
 
 /**
+ * Slugify text for use in IDs
+ */
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
  * Escape HTML entities for safe display in templates
  */
 function escapeHtml(str) {
@@ -357,6 +389,32 @@ function processInlineCode(text) {
 function processMarkdownBold(text) {
   // Replace **text** with <strong>text</strong>
   return text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
+/**
+ * Escape curly braces for Angular templates
+ * Angular interprets { and } as ICU message syntax, so we need to escape them
+ * Use {{ '{' }} and {{ '}' }} syntax for regular text
+ * Use HTML entities &#123; and &#125; for curly braces inside <code> tags
+ */
+function escapeAngularCurlyBraces(text) {
+  // Split by code tags to handle them separately
+  const parts = text.split(/(<code>.*?<\/code>)/g);
+  let result = '';
+  
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].startsWith('<code>') && parts[i].endsWith('</code>')) {
+      // Use HTML entities for curly braces inside code tags
+      const codeContent = parts[i];
+      const escapedCode = codeContent.replace(/{/g, '&#123;').replace(/}/g, '&#125;');
+      result += escapedCode;
+    } else {
+      // Use Angular interpolation syntax for curly braces in regular text
+      result += parts[i].replace(/{/g, "{{ '{' }}").replace(/}/g, "{{ '}' }}");
+    }
+  }
+  
+  return result;
 }
 
 /**
@@ -390,12 +448,15 @@ function generateComponent(
   let tableVars = '';
   let codeBlockIndex = 1; // Start from 1 to match user's example
   let tableIndex = 0;
+  const sectionData = []; // Collect section data for the sections array
 
   for (const section of sections) {
     const sectionTitle = escapeString(section.title);
+    const sectionId = slugify(section.title);
+    sectionData.push({ id: sectionId, title: section.title });
 
     templateSections += `
-      <documentation-section>
+      <documentation-section id="${sectionId}">
         <ng-container section-title>${sectionTitle}</ng-container>
 `;
 
@@ -439,7 +500,7 @@ function generateComponent(
     }
     // Handle Returns section
     else if (section.title === 'Returns' && section.returns) {
-      const processedReturns = processMarkdown(escapeHtml(section.returns));
+      const processedReturns = escapeAngularCurlyBraces(processMarkdown(escapeHtml(section.returns)));
       templateSections += `
         <p>${processedReturns}</p>
 `;
@@ -468,9 +529,22 @@ function generateComponent(
     else if (section.content.length > 0 && section.codeBlocks.length === 0) {
       for (const contentItem of section.content) {
         if (contentItem.type === 'text') {
-          const processedText = processMarkdown(escapeHtml(contentItem.value));
+          const processedText = escapeAngularCurlyBraces(processMarkdown(escapeHtml(contentItem.value)));
           templateSections += `
         <p>${processedText}</p>
+`;
+        } else if (contentItem.type === 'list') {
+          templateSections += `
+        <ul>
+`;
+          for (const item of contentItem.items) {
+            const processedItem = escapeAngularCurlyBraces(processMarkdown(escapeHtml(item)));
+            templateSections += `
+          <li>${processedItem}</li>
+`;
+          }
+          templateSections += `
+        </ul>
 `;
         }
       }
@@ -501,6 +575,10 @@ function generateComponent(
   // Generate source code variable
   const escapedSourceCode = escapeString(sourceCode);
 
+  // Add Source section ID
+  const sourceSectionId = slugify('Source');
+  sectionData.push({ id: sourceSectionId, title: 'Source' });
+
   // Check if any sections have tables
   const hasTables = sections.some(section => section.table !== null);
 
@@ -527,31 +605,48 @@ function generateComponent(
 `;
   }
 
+  // Generate sections array as array of objects with id and title
+  // Escape single quotes for TypeScript string literals
+  const escapeSingleQuotes = (str) => str.replace(/'/g, "\\'");
+  const sectionsArray = sectionData.map(s => {
+    const escapedTitle = escapeSingleQuotes(s.title);
+    return `  {\n    id: '${s.id}',\n    title: '${escapedTitle}',\n  }`;
+  }).join(',\n');
+
   const componentCode = `import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocumentationComponent } from '${relativePath}common/layout/documentation/documentation.component';
 import { DocumentationSectionComponent } from '${relativePath}common/layout/documentation-section/documentation-section.component';
 import { CodeBlockComponent } from '${relativePath}common/components/code-block/code-block.component';
+import { OnThisPageComponent } from '${relativePath}common/components/on-this-page/on-this-page.component';
 ${simpleTableImport}@Component({
   selector: '${componentName}',
   imports: [
     DocumentationComponent,
     DocumentationSectionComponent,
     CodeBlockComponent,
+    OnThisPageComponent,
 ${simpleTableImportItem}  ],
   template: \`
     <documentation>
       <ng-container documentation-title>${escapeString(title)}</ng-container>
-      <p>${escapeHtml(description)}</p>
+      <p>${escapeAngularCurlyBraces(escapeHtml(description))}</p>
 ${templateSections}
-      <documentation-section>
+      <documentation-section id="${sourceSectionId}">
         <ng-container section-title>Source</ng-container>
         <code-block [code]="sourceCode" [fileType]="'ts'" />
       </documentation-section>
+
+      <ng-container sidebar-right>
+        <on-this-page [sections]="sections" />
+      </ng-container>
     </documentation>
   \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ${toPascalCase(componentName)}Component {
+  sections = [
+  ${sectionsArray}
+  ];
 ${codeBlockVars}${tableVars}  sourceCode = \`${escapedSourceCode}\`;
 }
 `;
