@@ -57,15 +57,14 @@ import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationSidebarComponent {
-  readonly NAVIGATION_ROUTES = NAVIGATION_ROUTES;
-  readonly searchQuery = signal('');
+  searchQuery = signal('');
 
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.searchQuery.set(target.value);
   }
 
-  readonly filteredRoutes = computed(() => {
+  filteredRoutes = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
 
     if (!query) {
@@ -73,7 +72,7 @@ export class NavigationSidebarComponent {
     }
 
     return NAVIGATION_ROUTES.map((section) => {
-      const sectionTitle = (section.title || '').toLowerCase();
+      const sectionTitle = ((section.title as string) || '').toLowerCase();
       const sectionPath = (section.path || '').toLowerCase();
       const sectionMatches =
         sectionTitle.includes(query) || sectionPath.includes(query);
@@ -81,7 +80,7 @@ export class NavigationSidebarComponent {
       // Filter children that match the query
       const matchingChildren =
         section.children?.filter((child) => {
-          const childTitle = (child.title || '').toLowerCase();
+          const childTitle = ((child.title as string) || '').toLowerCase();
           const childPath = (child.path || '').toLowerCase();
           return childTitle.includes(query) || childPath.includes(query);
         }) || [];
