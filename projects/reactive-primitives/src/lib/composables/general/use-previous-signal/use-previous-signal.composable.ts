@@ -23,10 +23,8 @@ export function usePreviousSignal<T>(sourceSignal: Signal<T>): Signal<T | undefi
   // Track changes via effect to avoid side effects inside computed
   effect(() => {
     const currentValue = sourceSignal();
-    if (currentValue !== lastValue) {
-      previousSignal.set(lastValue);
-      lastValue = currentValue;
-    }
+    previousSignal.set(lastValue);
+    lastValue = currentValue;
   });
 
   return previousSignal.asReadonly();
