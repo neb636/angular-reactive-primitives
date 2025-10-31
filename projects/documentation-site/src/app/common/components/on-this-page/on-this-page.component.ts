@@ -1,4 +1,4 @@
-import { useRouteFragment } from './../../../../../../reactive-primitives/src/lib/composables/route/use-route-fragment/use-route-fragment.composable';
+import { useRouteFragment } from './../../../../../../angular-reactive-primitives/src/lib/composables/route/use-route-fragment/use-route-fragment.composable';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';

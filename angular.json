@@ -3,20 +3,20 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "reactive-primitives": {
+    "angular-reactive-primitives": {
       "projectType": "library",
-      "root": "projects/reactive-primitives",
-      "sourceRoot": "projects/reactive-primitives/src",
+      "root": "projects/angular-reactive-primitives",
+      "sourceRoot": "projects/angular-reactive-primitives/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/reactive-primitives/tsconfig.lib.prod.json"
+              "tsConfig": "projects/angular-reactive-primitives/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/reactive-primitives/tsconfig.lib.json"
+              "tsConfig": "projects/angular-reactive-primitives/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -24,13 +24,13 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "projects/reactive-primitives/tsconfig.spec.json"
+            "tsConfig": "projects/angular-reactive-primitives/tsconfig.spec.json"
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/reactive-primitives/**/*.ts"]
+            "lintFilePatterns": ["projects/angular-reactive-primitives/**/*.ts"]
           }
         }
       }

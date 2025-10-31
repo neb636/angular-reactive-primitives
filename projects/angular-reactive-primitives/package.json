@@ -1,5 +1,5 @@
 {
-  "name": "reactive-primitives",
+  "name": "angular-reactive-primitives",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^20.3.0",

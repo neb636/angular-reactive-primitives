@@ -26,7 +26,7 @@ import { OnThisPageComponent } from '../../../common/components/on-this-page/on-
 
         <code-block
           title="Install Package"
-          [code]="'npm install @angular/reactive-primitives'"
+          [code]="'npm install angular-reactive-primitives'"
         />
       </documentation-section>
 
@@ -67,7 +67,7 @@ export class InstallPageComponent {
     },
   ];
   basicUsageCode = `import { Component, signal } from '@angular/core';
-import { useDebouncedSignal } from '@angular/reactive-primitives';
+import { useDebouncedSignal } from 'angular-reactive-primitives';
 
 @Component({
   selector: 'example',

@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/reactive-primitives",
+  "dest": "../../dist/angular-reactive-primitives",
   "lib": {
     "entryFile": "src/public-api.ts"
   }

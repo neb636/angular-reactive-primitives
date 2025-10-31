@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const libPath = path.join(__dirname, 'projects/reactive-primitives/src/lib');
+const libPath = path.join(__dirname, 'projects/angular-reactive-primitives/src/lib');
 
 function findDocFiles(dir) {
   const files = [];

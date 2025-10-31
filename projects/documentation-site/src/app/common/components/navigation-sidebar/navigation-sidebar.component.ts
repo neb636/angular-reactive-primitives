@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { Route } from '@angular/router';
-import { useThrottledSignal } from 'reactive-primitives';
+import { useThrottledSignal } from 'angular-reactive-primitives';
 import { NAVIGATION_ROUTES } from '../../../app.routes';
 import { ExpandableNavMenuComponent } from './expandable-nav-menu/expandable-nav-menu.component';
 import { FormsModule } from '@angular/forms';
