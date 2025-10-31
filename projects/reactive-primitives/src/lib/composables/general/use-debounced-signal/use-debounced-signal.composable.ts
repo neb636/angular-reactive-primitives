@@ -1,4 +1,4 @@
-import { Signal, effect, signal } from '@angular/core';
+import { Signal, effect, signal, DestroyRef, inject } from '@angular/core';
 import debounce from 'lodash-es/debounce';
 
 /*
@@ -17,6 +17,7 @@ import debounce from 'lodash-es/debounce';
  */
 export function useDebouncedSignal<T>(sourceSignal: Signal<T>, delayMs: number = 300): Signal<T> {
   const debouncedSignal = signal<T>(sourceSignal());
+  const destroyRef = inject(DestroyRef);
 
   const debouncedUpdate = debounce((value: T) => {
     debouncedSignal.set(value);
@@ -25,6 +26,10 @@ export function useDebouncedSignal<T>(sourceSignal: Signal<T>, delayMs: number =
   effect(() => {
     const value = sourceSignal();
     debouncedUpdate(value);
+  });
+
+  destroyRef.onDestroy(() => {
+    debouncedUpdate.cancel();
   });
 
   return debouncedSignal.asReadonly();

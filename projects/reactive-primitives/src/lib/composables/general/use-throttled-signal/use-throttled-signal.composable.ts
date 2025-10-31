@@ -1,4 +1,4 @@
-import { Signal, effect, signal } from '@angular/core';
+import { Signal, effect, signal, DestroyRef, inject } from '@angular/core';
 import throttle from 'lodash-es/throttle';
 
 /*
@@ -17,6 +17,7 @@ import throttle from 'lodash-es/throttle';
  */
 export function useThrottledSignal<T>(sourceSignal: Signal<T>, delayMs: number = 300): Signal<T> {
   const throttledSignal = signal<T>(sourceSignal());
+  const destroyRef = inject(DestroyRef);
 
   const throttledUpdate = throttle((value: T) => {
     throttledSignal.set(value);
@@ -25,6 +26,10 @@ export function useThrottledSignal<T>(sourceSignal: Signal<T>, delayMs: number =
   effect(() => {
     const value = sourceSignal();
     throttledUpdate(value);
+  });
+
+  destroyRef.onDestroy(() => {
+    throttledUpdate.cancel();
   });
 
   return throttledSignal.asReadonly();
