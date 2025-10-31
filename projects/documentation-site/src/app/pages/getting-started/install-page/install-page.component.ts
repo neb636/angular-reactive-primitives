@@ -39,9 +39,7 @@ import { OnThisPageComponent } from '../../../common/components/on-this-page/on-
       <documentation-section id="requirements">
         <ng-container section-title>Requirements</ng-container>
         <ul>
-          <li>Angular 17+ (with signals support)</li>
-          <li>TypeScript 5.0+</li>
-          <li>Node.js 18+</li>
+          <li>Angular 20+</li>
         </ul>
       </documentation-section>
 

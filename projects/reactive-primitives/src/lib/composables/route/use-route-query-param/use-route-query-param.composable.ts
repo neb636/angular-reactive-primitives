@@ -1,5 +1,5 @@
 import { computed } from '@angular/core';
-import { useRouteQueryParams } from '../use-route-query-params/use-query-parameters.composable';
+import { useRouteQueryParams } from '../use-route-query-params/use-route-query-params.composable';
 
 export const useRouteQueryParam = <T extends undefined | string>(
   paramName: string,
