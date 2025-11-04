@@ -44,7 +44,7 @@ class SmoothCursorComponent {
 ## Notes
 
 - Returned signal is **readonly** to prevent direct manipulation
-- Uses `createSharedComposable` internally - components with the same `throttleMs` value share a single instance
+- Uses `createSharedComposable` internally - usages with the same `throttleMs` value share a single instance
 - Different `throttleMs` values create separate instances with their own event listeners
 - Throttles mouse move events by default (100ms) to prevent excessive updates
 - Event listeners are automatically cleaned up when no more subscribers

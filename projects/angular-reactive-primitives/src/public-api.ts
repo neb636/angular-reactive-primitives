@@ -26,7 +26,6 @@ export * from './lib/effects/sync-local-storage/sync-local-storage.effect';
 export * from './lib/effects/log-changes/log-changes.effect';
 
 // Utils
-export * from './lib/utils/create-singleton-composable/create-singleton-composable';
 export * from './lib/utils/create-shared-composable/create-shared-composable';
 
 // Documentation types (for reference app)

@@ -1,98 +1,97 @@
-import { DestroyRef, inject, Injector } from '@angular/core';
+import { DestroyRef, inject } from '@angular/core';
 
-type SharedComposableResult<T> = { value: T; cleanup?: () => void };
+interface ComposableResult<T> {
+  value: T;
+  cleanup?: () => void;
+}
 
-type CacheEntry<T> = {
-  result: SharedComposableResult<T>;
+interface CacheEntry<T> {
+  result: T;
   refCount: number;
-};
+  cleanup?: () => void;
+}
 
 /**
- * Creates a shared composable that caches its result per injector context and parameters.
- * The factory function can accept parameters, and different parameter values will create
- * separate cached instances within the same injector context.
- *
- * @param factory - A factory function that creates the composable result
- * @returns A composable function that shares its result across all consumers with the same parameters
+ * Creates a shared instance of a wrapped composable function that uses reference counting.
+ * When the last consumer is destroyed, the shared instance and its resources are cleaned up automatically.
  *
  * @example
- * // Factory with no parameters
- * export const useSharedData = createSharedComposable(() => {
- *   const data = signal(fetchData());
- *   return { value: data };
+ * // Basic usage without parameters
+ * const useWebSocket = createSharedComposable(() => {
+ *   const socket = new WebSocket('wss://api.example.com');
+ *   const messages = signal<string[]>([]);
+ *
+ *   socket.onmessage = (event) => {
+ *     messages.update((m) => [...m, event.data]);
+ *   };
+ *
+ *   return {
+ *     value: messages.asReadonly(),
+ *     cleanup: () => socket.close(),
+ *   };
  * });
  *
  * @example
- * // Factory with parameters - different params create different instances
- * export const useWindowSize = createSharedComposable((debounceMs = 100) => {
- *   const size = signal(getWindowSize());
- *   // debounce logic...
- *   return { value: size };
+ * // With parameters
+ * const useWindowSize = createSharedComposable((debounceMs = 100) => {
+ *   const document = inject(DOCUMENT);
+ *   const size = signal(getCurrentSize());
+ *
+ *   const handleResize = () => size.set(getCurrentSize());
+ *   document.defaultView?.addEventListener('resize', handleResize);
+ *
+ *   return {
+ *     value: useDebouncedSignal(size, debounceMs),
+ *     cleanup: () => {
+ *       document.defaultView?.removeEventListener('resize', handleResize);
+ *     },
+ *   };
  * });
- *
- * // Component A uses 100ms - creates first instance
- * windowSize = useWindowSize(100);
- *
- * // Component B uses 100ms - shares instance with A
- * windowSize = useWindowSize(100);
- *
- * // Component C uses 500ms - creates second instance
- * windowSize = useWindowSize(500);
- *
- * @remarks
- * Parameters must be JSON-serializable (primitives, arrays, plain objects).
- * Functions, symbols, and circular references are not supported.
  */
-export const createSharedComposable = <TArgs extends unknown[], TResult>(
-  factory: (...args: TArgs) => SharedComposableResult<TResult>,
-): ((...args: TArgs) => TResult) => {
-  // Cache structure: Injector -> Map<paramsKey, CacheEntry>
-  const cache = new WeakMap<Injector, Map<string, CacheEntry<TResult>>>();
+export function createSharedComposable<T, Args extends any[]>(
+  factory: (...args: Args) => ComposableResult<T>,
+): (...args: Args) => T {
+  // Cache is scoped to the factory function itself
+  const cache = new Map<string, CacheEntry<T>>();
 
-  return (...args: TArgs): TResult => {
-    const injector = inject(Injector);
+  return (...args: Args): T => {
     const destroyRef = inject(DestroyRef);
 
-    // Create a cache key from the parameters
-    const paramsKey = args.length > 0 ? JSON.stringify(args) : '__no_params__';
+    // Create cache key from arguments
+    const cacheKey = args.length > 0 ? JSON.stringify(args) : '__default__';
 
-    // Get or create the params map for this injector
-    if (!cache.has(injector)) {
-      cache.set(injector, new Map());
-    }
+    // Get or create cached entry
+    let entry = cache.get(cacheKey);
 
-    const paramsMap = cache.get(injector)!;
+    if (!entry) {
+      // Create new instance
+      const result = factory(...args);
 
-    // Get or create the cache entry for these specific parameters
-    if (!paramsMap.has(paramsKey)) {
-      paramsMap.set(paramsKey, {
-        result: factory(...args),
+      entry = {
+        result: result.value,
         refCount: 0,
-      });
+        cleanup: result.cleanup,
+      };
+
+      cache.set(cacheKey, entry);
     }
 
-    const entry = paramsMap.get(paramsKey)!;
+    // Increment reference count
     entry.refCount++;
 
-    // Cleanup when this component/service is destroyed
+    // Register cleanup on component destruction
     destroyRef.onDestroy(() => {
-      entry.refCount--;
+      if (entry) {
+        entry.refCount--;
 
-      if (entry.refCount === 0) {
-        // No more consumers, clean up the shared instance
-        if (entry.result.cleanup) {
-          entry.result.cleanup();
-        }
-
-        paramsMap.delete(paramsKey);
-
-        // Clean up the injector's map if empty
-        if (paramsMap.size === 0) {
-          cache.delete(injector);
+        // If no more references, cleanup and remove from cache
+        if (entry.refCount <= 0) {
+          entry.cleanup?.();
+          cache.delete(cacheKey);
         }
       }
     });
 
-    return entry.result.value;
+    return entry.result;
   };
-};
+}

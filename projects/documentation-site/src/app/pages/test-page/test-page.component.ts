@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { useWindowSize } from 'angular-reactive-primitives';
+import { useWindowSize, useMousePosition, useDocumentVisibility } from 'angular-reactive-primitives';
 import {
   TabGroupComponent,
   TabComponent,
@@ -29,6 +29,16 @@ import {
     </section>
 
     <section>
+      <p>Mouse position: {{ mousePosition().x }}, {{ mousePosition().y }}</p>
+    </section>
+
+    <section>
+      <p>Document visibility: {{ documentVisibility() ? 'Visible' : 'Hidden' }}</p>
+    </section>
+
+    
+
+    <section>
       <tab-group>
         <tab label="CLI">npx shadcn-ui@latest add button</tab>
         <tab label="Interface">npm install @shadcn/ui-button</tab>
@@ -39,4 +49,16 @@ import {
 })
 export class TestPageComponent {
   windowSize = useWindowSize();
+  mousePosition = useMousePosition();
+  mousePosition2 = useMousePosition();
+  mousePosition3 = useMousePosition();
+  mousePosition4 = useMousePosition();
+  mousePosition5 = useMousePosition();
+  mousePosition6 = useMousePosition();
+  mousePosition7 = useMousePosition();
+  mousePosition8 = useMousePosition();
+  mousePosition9 = useMousePosition();
+  mousePosition10 = useMousePosition();
+  mousePosition11 = useMousePosition(2000);
+  documentVisibility = useDocumentVisibility();
 }

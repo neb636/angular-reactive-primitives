@@ -1,6 +1,6 @@
 import { signal, inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { useThrottledSignal } from '../../general/use-throttled-signal/use-throttled-signal.composable';
+import throttle from 'lodash-es/throttle';
 import { createSharedComposable } from '../../../utils/create-shared-composable/create-shared-composable';
 
 export type MousePosition = { x: number; y: number };
@@ -36,21 +36,28 @@ export const useMousePosition = createSharedComposable(
     const isBrowser = isPlatformBrowser(platformId);
     const mousePosition = signal<MousePosition>({ x: 0, y: 0 });
 
-    const handleMouseMove = (event: MouseEvent) =>
+    const updatePosition = (event: MouseEvent) => {
       mousePosition.set({ x: event.clientX, y: event.clientY });
+    };
+
+    const throttledUpdatePosition = throttle(updatePosition, throttleMs);
 
     // Only set up event listeners in the browser
     if (isBrowser && document.defaultView) {
-      document.defaultView.addEventListener('mousemove', handleMouseMove);
+      document.defaultView.addEventListener(
+        'mousemove',
+        throttledUpdatePosition,
+      );
     }
 
     return {
-      value: useThrottledSignal(mousePosition, throttleMs),
+      value: mousePosition.asReadonly(),
       cleanup: () => {
+        throttledUpdatePosition.cancel();
         if (isBrowser && document.defaultView) {
           document.defaultView.removeEventListener(
             'mousemove',
-            handleMouseMove,
+            throttledUpdatePosition,
           );
         }
       },
