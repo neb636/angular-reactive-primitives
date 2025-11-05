@@ -16,15 +16,21 @@ import { Signal, effect, signal } from '@angular/core';
  * currentValue.set('world');
  * console.log(previousValue()); // 'hello'
  */
-export function usePreviousSignal<T>(sourceSignal: Signal<T>): Signal<T | undefined> {
+export function usePreviousSignal<T>(
+  sourceSignal: Signal<T>,
+): Signal<T | undefined> {
   const previousSignal = signal<T | undefined>(undefined);
-  let lastValue = sourceSignal();
+  let lastValue: T | undefined = undefined;
+  let isFirstRun = true;
 
   // Track changes via effect to avoid side effects inside computed
   effect(() => {
     const currentValue = sourceSignal();
-    previousSignal.set(lastValue);
+    if (!isFirstRun) {
+      previousSignal.set(lastValue);
+    }
     lastValue = currentValue;
+    isFirstRun = false;
   });
 
   return previousSignal.asReadonly();
