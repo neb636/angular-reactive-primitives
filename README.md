@@ -16,7 +16,7 @@ A collection of small, reusable reactive building blocks for modern Angular (v20
 
 ## Status
 
-- Work in progress. The primitives are not published yet; treat this repository as a source of copy‑and‑paste utilities or consume the library locally.
+This library is ready for publishing to npm. See the [Building and Publishing](#building-and-publishing) section below for instructions.
 
 ## Getting started
 
@@ -48,6 +48,52 @@ npm run test
 
 ```bash
 npm run docs:dev
+```
+
+## Building and Publishing
+
+### Build the Library
+
+Build the library for distribution:
+
+```bash
+npm run build
+```
+
+Build artifacts are output to `dist/angular-reactive-primitives`.
+
+### Publishing to npm
+
+After building, you can publish the library:
+
+```bash
+cd dist/angular-reactive-primitives
+npm publish
+```
+
+**Pre-publish checklist:**
+
+- Ensure all tests pass (`npm run test`)
+- Update version in `projects/angular-reactive-primitives/package.json`
+- Update `CHANGELOG.md` with release notes
+- Build succeeds without errors
+- Review the contents of `dist/angular-reactive-primitives`
+
+### Testing Locally
+
+Before publishing, test the package locally:
+
+```bash
+# Build the library
+npm run build
+
+# Create a tarball
+cd dist/angular-reactive-primitives
+npm pack
+
+# Install in another project
+cd /path/to/test-project
+npm install /path/to/angular-reactive-primitives-0.0.1.tgz
 ```
 
 ## Project structure
