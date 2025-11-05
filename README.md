@@ -62,7 +62,7 @@ export class SearchBoxComponent {
 
 ### Utilities
 
-- [`createSharedComposable()`](./projects/angular-reactive-primitives/src/lib/utils/create-shared-composable/create-shared-composable.doc.md) - Convert composables to singleton instances
+- [`createSharedComposable()`](./projects/angular-reactive-primitives/src/lib/utils/create-shared-composable/create-shared-composable.doc.md) - Convert composables to shared instances
 
 ## Status
 
