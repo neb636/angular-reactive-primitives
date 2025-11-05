@@ -138,7 +138,7 @@ describe('useElementBounding', () => {
     expect(bounding.height).toBe(100);
   });
 
-  it('should update when element changes', (done) => {
+  it('should update when element changes', async () => {
     @Component({
       template: `
         <div #div1 style="width: 100px; height: 50px;"></div>
@@ -161,25 +161,24 @@ describe('useElementBounding', () => {
     component.elementSignal.set(component.div1Ref()!);
     fixture.detectChanges();
 
-    setTimeout(() => {
-      let bounding = component.bounding();
-      expect(bounding.width).toBe(100);
-      expect(bounding.height).toBe(50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    let bounding = component.bounding();
+    expect(bounding.width).toBe(100);
+    expect(bounding.height).toBe(50);
 
-      // Change to second element
-      component.elementSignal.set(component.div2Ref()!);
-      fixture.detectChanges();
+    // Change to second element
+    component.elementSignal.set(component.div2Ref()!);
+    fixture.detectChanges();
 
-      setTimeout(() => {
-        bounding = component.bounding();
-        expect(bounding.width).toBe(200);
-        expect(bounding.height).toBe(100);
-        done();
-      }, 50);
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(200);
+    expect(bounding.height).toBe(100);
   });
 
-  it('should handle element becoming null', (done) => {
+  it('should handle element becoming null', async () => {
     @Component({
       template: '<div #myDiv style="width: 100px; height: 50px;"></div>',
     })
@@ -198,21 +197,20 @@ describe('useElementBounding', () => {
     component.elementSignal.set(component.divRef()!);
     fixture.detectChanges();
 
-    setTimeout(() => {
-      let bounding = component.bounding();
-      expect(bounding.width).toBe(100);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    let bounding = component.bounding();
+    expect(bounding.width).toBe(100);
 
-      // Set to null
-      component.elementSignal.set(null);
-      fixture.detectChanges();
+    // Set to null
+    component.elementSignal.set(null);
+    fixture.detectChanges();
 
-      setTimeout(() => {
-        bounding = component.bounding();
-        expect(bounding.width).toBe(0);
-        expect(bounding.height).toBe(0);
-        done();
-      }, 50);
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(0);
+    expect(bounding.height).toBe(0);
   });
 
   it('should provide an update method', () => {
@@ -234,7 +232,7 @@ describe('useElementBounding', () => {
     bounding.update();
   });
 
-  it('should manually update bounding when update() is called', (done) => {
+  it('should manually update bounding when update() is called', async () => {
     let mockWidth = 100;
     
     // Mock at prototype level
@@ -280,19 +278,18 @@ describe('useElementBounding', () => {
     mockWidth = 300;
 
     // Size shouldn't update automatically (listeners disabled)
-    setTimeout(() => {
-      bounding = component.bounding();
-      expect(bounding.width).toBe(100); // Still old value
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(100); // Still old value
 
-      // Manual update
-      bounding.update();
+    // Manual update
+    bounding.update();
 
-      setTimeout(() => {
-        bounding = component.bounding();
-        expect(bounding.width).toBe(300); // Updated!
-        done();
-      }, 50);
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(300); // Updated!
   });
 
   it('should respect custom throttle configuration', () => {

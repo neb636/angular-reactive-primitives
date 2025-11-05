@@ -46,7 +46,7 @@ describe('useWindowSize', () => {
     expect(size.height).toBe(window.innerHeight);
   });
 
-  it('should update window size on resize event with default debounce (100ms)', (done) => {
+  it('should update window size on resize event with default debounce (100ms)', async () => {
     @Component({
       template: '',
     })
@@ -75,15 +75,14 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // Wait for debounce delay (default 100ms) + buffer
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).toBe(1024);
-      expect(size.height).toBe(768);
-      done();
-    }, 150);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size = component.windowSize();
+    expect(size.width).toBe(1024);
+    expect(size.height).toBe(768);
   });
 
-  it('should support custom debounce values', (done) => {
+  it('should support custom debounce values', async () => {
     @Component({
       template: '',
     })
@@ -112,22 +111,21 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // Should not update before debounce delay
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).not.toBe(1920);
-      expect(size.height).not.toBe(1080);
-    }, 150);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    let size = component.windowSize();
+    expect(size.width).not.toBe(1920);
+    expect(size.height).not.toBe(1080);
 
     // Should update after debounce delay (300ms) + buffer
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).toBe(1920);
-      expect(size.height).toBe(1080);
-      done();
-    }, 350);
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    size = component.windowSize();
+    expect(size.width).toBe(1920);
+    expect(size.height).toBe(1080);
   });
 
-  it('should debounce multiple rapid resize events', (done) => {
+  it('should debounce multiple rapid resize events', async () => {
     @Component({
       template: '',
     })
@@ -156,13 +154,12 @@ describe('useWindowSize', () => {
     }
 
     // Wait for debounce delay
-    setTimeout(() => {
-      const size = component.windowSize();
-      // Should capture the last event values due to debouncing
-      expect(size.width).toBe(900); // 800 + 10 * 10
-      expect(size.height).toBe(700); // 600 + 10 * 10
-      done();
-    }, 150);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size = component.windowSize();
+    // Should capture the last event values due to debouncing
+    expect(size.width).toBe(900); // 800 + 10 * 10
+    expect(size.height).toBe(700); // 600 + 10 * 10
   });
 
   it('should return readonly signal that cannot be directly modified', () => {
@@ -182,7 +179,7 @@ describe('useWindowSize', () => {
     expect((windowSize as any).set).toBeUndefined();
   });
 
-  it('should share instance between components with same debounceMs value', (done) => {
+  it('should share instance between components with same debounceMs value', async () => {
     @Component({
       selector: 'test-component-shared-1',
       template: '',
@@ -221,20 +218,19 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // Wait for debounce
-    setTimeout(() => {
-      const size1 = fixture1.componentInstance.windowSize();
-      const size2 = fixture2.componentInstance.windowSize();
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size1 = fixture1.componentInstance.windowSize();
+    const size2 = fixture2.componentInstance.windowSize();
 
-      // Both should have the same values (shared instance)
-      expect(size1.width).toBe(1440);
-      expect(size1.height).toBe(900);
-      expect(size2.width).toBe(1440);
-      expect(size2.height).toBe(900);
-      done();
-    }, 150);
+    // Both should have the same values (shared instance)
+    expect(size1.width).toBe(1440);
+    expect(size1.height).toBe(900);
+    expect(size2.width).toBe(1440);
+    expect(size2.height).toBe(900);
   });
 
-  it('should create separate instances for different debounceMs values', (done) => {
+  it('should create separate instances for different debounceMs values', async () => {
     @Component({
       selector: 'test-component-separate-1',
       template: '',
@@ -276,23 +272,22 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // Check after 100ms - component1 (50ms debounce) should update, component2 (200ms debounce) should not
-    setTimeout(() => {
-      const size1 = fixture1.componentInstance.windowSize();
-      const size2 = fixture2.componentInstance.windowSize();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    const size1 = fixture1.componentInstance.windowSize();
+    const size2 = fixture2.componentInstance.windowSize();
 
-      expect(size1.width).toBe(1600);
-      expect(size1.height).toBe(1200);
-      expect(size2.width).toBe(initialSize2.width); // Not updated yet due to longer debounce
-      expect(size2.height).toBe(initialSize2.height);
+    expect(size1.width).toBe(1600);
+    expect(size1.height).toBe(1200);
+    expect(size2.width).toBe(initialSize2.width); // Not updated yet due to longer debounce
+    expect(size2.height).toBe(initialSize2.height);
 
-      // Check after 250ms - both should be updated
-      setTimeout(() => {
-        const size2Updated = fixture2.componentInstance.windowSize();
-        expect(size2Updated.width).toBe(1600);
-        expect(size2Updated.height).toBe(1200);
-        done();
-      }, 200);
-    }, 100);
+    // Check after 250ms - both should be updated
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size2Updated = fixture2.componentInstance.windowSize();
+    expect(size2Updated.width).toBe(1600);
+    expect(size2Updated.height).toBe(1200);
   });
 
   it('should clean up event listeners on component destroy', () => {
@@ -346,7 +341,7 @@ describe('useWindowSize', () => {
     expect(typeof size.height).toBe('number');
   });
 
-  it('should not set up event listeners on server', (done) => {
+  it('should not set up event listeners on server', async () => {
     // Override PLATFORM_ID to simulate server environment
     TestBed.configureTestingModule({
       providers: [
@@ -384,17 +379,16 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // Wait for potential debounce
-    setTimeout(() => {
-      const size = component.windowSize();
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size = component.windowSize();
 
-      // Should still be at default values (no event listener set up on server)
-      expect(size.width).toBe(initialSize.width);
-      expect(size.height).toBe(initialSize.height);
-      done();
-    }, 150);
+    // Should still be at default values (no event listener set up on server)
+    expect(size.width).toBe(initialSize.width);
+    expect(size.height).toBe(initialSize.height);
   });
 
-  it('should handle zero debounce value', (done) => {
+  it('should handle zero debounce value', async () => {
     @Component({
       template: '',
     })
@@ -423,15 +417,14 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // With 0ms debounce, should update immediately (or very quickly)
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).toBe(800);
-      expect(size.height).toBe(600);
-      done();
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    const size = component.windowSize();
+    expect(size.width).toBe(800);
+    expect(size.height).toBe(600);
   });
 
-  it('should update continuously as window resizes', (done) => {
+  it('should update continuously as window resizes', async () => {
     @Component({
       template: '',
     })
@@ -457,53 +450,52 @@ describe('useWindowSize', () => {
     });
     window.dispatchEvent(new Event('resize'));
 
-    setTimeout(() => {
-      let size = component.windowSize();
-      expect(size.width).toBe(1000);
-      expect(size.height).toBe(700);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    let size = component.windowSize();
+    expect(size.width).toBe(1000);
+    expect(size.height).toBe(700);
 
-      // Second resize
-      Object.defineProperty(window, 'innerWidth', {
-        writable: true,
-        configurable: true,
-        value: 1200,
-      });
-      Object.defineProperty(window, 'innerHeight', {
-        writable: true,
-        configurable: true,
-        value: 800,
-      });
-      window.dispatchEvent(new Event('resize'));
+    // Second resize
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1200,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      configurable: true,
+      value: 800,
+    });
+    window.dispatchEvent(new Event('resize'));
 
-      setTimeout(() => {
-        size = component.windowSize();
-        expect(size.width).toBe(1200);
-        expect(size.height).toBe(800);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    size = component.windowSize();
+    expect(size.width).toBe(1200);
+    expect(size.height).toBe(800);
 
-        // Third resize
-        Object.defineProperty(window, 'innerWidth', {
-          writable: true,
-          configurable: true,
-          value: 1400,
-        });
-        Object.defineProperty(window, 'innerHeight', {
-          writable: true,
-          configurable: true,
-          value: 900,
-        });
-        window.dispatchEvent(new Event('resize'));
+    // Third resize
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1400,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      configurable: true,
+      value: 900,
+    });
+    window.dispatchEvent(new Event('resize'));
 
-        setTimeout(() => {
-          size = component.windowSize();
-          expect(size.width).toBe(1400);
-          expect(size.height).toBe(900);
-          done();
-        }, 100);
-      }, 100);
-    }, 100);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    size = component.windowSize();
+    expect(size.width).toBe(1400);
+    expect(size.height).toBe(900);
   });
 
-  it('should handle very small window sizes', (done) => {
+  it('should handle very small window sizes', async () => {
     @Component({
       template: '',
     })
@@ -531,15 +523,14 @@ describe('useWindowSize', () => {
     // Simulate resize event
     window.dispatchEvent(new Event('resize'));
 
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).toBe(320);
-      expect(size.height).toBe(240);
-      done();
-    }, 150);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size = component.windowSize();
+    expect(size.width).toBe(320);
+    expect(size.height).toBe(240);
   });
 
-  it('should handle very large window sizes', (done) => {
+  it('should handle very large window sizes', async () => {
     @Component({
       template: '',
     })
@@ -567,15 +558,14 @@ describe('useWindowSize', () => {
     // Simulate resize event
     window.dispatchEvent(new Event('resize'));
 
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).toBe(7680);
-      expect(size.height).toBe(4320);
-      done();
-    }, 150);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size = component.windowSize();
+    expect(size.width).toBe(7680);
+    expect(size.height).toBe(4320);
   });
 
-  it('should handle multiple components with different debounce values independently', (done) => {
+  it('should handle multiple components with different debounce values independently', async () => {
     @Component({
       template: '',
     })
@@ -606,29 +596,28 @@ describe('useWindowSize', () => {
     window.dispatchEvent(new Event('resize'));
 
     // Check after 150ms - windowSize1 and windowSize2 should update, windowSize3 should not
-    setTimeout(() => {
-      const size1 = component.windowSize1();
-      const size2 = component.windowSize2();
-      const size3 = component.windowSize3();
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size1 = component.windowSize1();
+    const size2 = component.windowSize2();
+    const size3 = component.windowSize3();
 
-      expect(size1.width).toBe(1111);
-      expect(size1.height).toBe(2222);
-      expect(size2.width).toBe(1111); // Same as size1 (shared instance)
-      expect(size2.height).toBe(2222);
-      expect(size3.width).not.toBe(1111); // Not updated yet
-      expect(size3.height).not.toBe(2222);
+    expect(size1.width).toBe(1111);
+    expect(size1.height).toBe(2222);
+    expect(size2.width).toBe(1111); // Same as size1 (shared instance)
+    expect(size2.height).toBe(2222);
+    expect(size3.width).not.toBe(1111); // Not updated yet
+    expect(size3.height).not.toBe(2222);
 
-      // Check after 350ms - all should be updated
-      setTimeout(() => {
-        const size3Updated = component.windowSize3();
-        expect(size3Updated.width).toBe(1111);
-        expect(size3Updated.height).toBe(2222);
-        done();
-      }, 250);
-    }, 150);
+    // Check after 350ms - all should be updated
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    const size3Updated = component.windowSize3();
+    expect(size3Updated.width).toBe(1111);
+    expect(size3Updated.height).toBe(2222);
   });
 
-  it('should handle aspect ratio changes (width vs height)', (done) => {
+  it('should handle aspect ratio changes (width vs height)', async () => {
     @Component({
       template: '',
     })
@@ -655,13 +644,12 @@ describe('useWindowSize', () => {
 
     window.dispatchEvent(new Event('resize'));
 
-    setTimeout(() => {
-      const size = component.windowSize();
-      expect(size.width).toBe(768);
-      expect(size.height).toBe(1024);
-      expect(size.height).toBeGreaterThan(size.width);
-      done();
-    }, 150);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const size = component.windowSize();
+    expect(size.width).toBe(768);
+    expect(size.height).toBe(1024);
+    expect(size.height).toBeGreaterThan(size.width);
   });
 
   it('should return WindowSize type with width and height properties', () => {

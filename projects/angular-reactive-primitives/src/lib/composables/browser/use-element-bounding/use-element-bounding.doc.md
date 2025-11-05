@@ -230,3 +230,4 @@ type ElementBounding = {
 - **Drag and drop**: Track element bounds during drag operations
 
 
+
