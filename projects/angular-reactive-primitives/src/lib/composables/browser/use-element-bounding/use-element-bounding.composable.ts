@@ -111,7 +111,7 @@ export function useElementBounding(
   });
 
   let resizeObserver: ResizeObserver | null = null;
-  let currentElement: Element | null = null;
+  let windowListenersActive = false;
 
   const updateBounding = () => {
     const elementOrRef = elementSignal();
@@ -162,29 +162,37 @@ export function useElementBounding(
         resizeObserver = null;
       }
 
-      if (element) {
-        currentElement = element;
+      // Clean up window event listeners
+      if (windowListenersActive) {
+        if (windowResize) {
+          window.removeEventListener('resize', throttledUpdate);
+        }
+        if (windowScroll) {
+          window.removeEventListener('scroll', throttledUpdate, true);
+        }
+        windowListenersActive = false;
+      }
 
+      if (element) {
         // Initial update
         updateBounding();
 
         // Set up ResizeObserver for size changes
         resizeObserver = new ResizeObserver(throttledUpdate);
         resizeObserver.observe(element);
+
+        // Set up window event listeners if enabled
+        if (windowResize) {
+          window.addEventListener('resize', throttledUpdate);
+        }
+        if (windowScroll) {
+          window.addEventListener('scroll', throttledUpdate, true); // Use capture to catch all scroll events
+        }
+        windowListenersActive = true;
       } else {
-        currentElement = null;
         boundingSignal.update((prev) => ({ ...defaultBounding, update: prev.update }));
       }
     });
-
-    // Set up window event listeners if enabled
-    if (windowResize) {
-      window.addEventListener('resize', throttledUpdate);
-    }
-
-    if (windowScroll) {
-      window.addEventListener('scroll', throttledUpdate, true); // Use capture to catch all scroll events
-    }
   }
 
   // Cleanup
@@ -195,7 +203,7 @@ export function useElementBounding(
       resizeObserver.disconnect();
     }
 
-    if (isBrowser) {
+    if (isBrowser && windowListenersActive) {
       if (windowResize) {
         window.removeEventListener('resize', throttledUpdate);
       }

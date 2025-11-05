@@ -1,6 +1,16 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  viewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { useWindowSize, useMousePosition, useDocumentVisibility } from 'angular-reactive-primitives';
+import {
+  useWindowSize,
+  useMousePosition,
+  useDocumentVisibility,
+  useElementBounding,
+} from 'angular-reactive-primitives';
 import {
   TabGroupComponent,
   TabComponent,
@@ -33,18 +43,27 @@ import {
     </section>
 
     <section>
-      <p>Document visibility: {{ documentVisibility() ? 'Visible' : 'Hidden' }}</p>
+      <p>
+        Document visibility: {{ documentVisibility() ? 'Visible' : 'Hidden' }}
+      </p>
     </section>
 
-    
+    <section>
+      <p>
+        Element bounding: {{ elementBounding().x }}, {{ elementBounding().y }},
+        {{ elementBounding().width }}, {{ elementBounding().height }}
+      </p>
+    </section>
 
     <section>
-      <tab-group>
-        <tab label="CLI">npx shadcn-ui@latest add button</tab>
-        <tab label="Interface">npm install @shadcn/ui-button</tab>
-        <tab label="Other">yarn add @shadcn/ui-button</tab>
-     </tab-group>
-  </section>
+      <div
+        #element
+        class="element"
+        style="width: 100px; height: 1000px; background-color: red;"
+      >
+        Element
+      </div>
+    </section>
   `,
 })
 export class TestPageComponent {
@@ -61,4 +80,7 @@ export class TestPageComponent {
   mousePosition10 = useMousePosition();
   mousePosition11 = useMousePosition(2000);
   documentVisibility = useDocumentVisibility();
+
+  elementRef = viewChild<ElementRef>('element');
+  elementBounding = useElementBounding(this.elementRef!);
 }
