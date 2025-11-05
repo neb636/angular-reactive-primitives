@@ -26,7 +26,8 @@
           "options": {
             "tsConfig": "projects/angular-reactive-primitives/tsconfig.spec.json",
             "runner": "vitest",
-            "buildTarget": "::development"
+            "buildTarget": "::development",
+            "setupFiles": ["projects/angular-reactive-primitives/src/test.ts"]
           }
         },
         "lint": {

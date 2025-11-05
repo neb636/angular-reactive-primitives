@@ -24,7 +24,6 @@ export * from './lib/composables/general/use-throttled-signal/use-throttled-sign
 // Effects
 export * from './lib/effects/sync-query-params/sync-query-params.effect';
 export * from './lib/effects/sync-local-storage/sync-local-storage.effect';
-export * from './lib/effects/log-changes/log-changes.effect';
 
 // Utils
 export * from './lib/utils/create-shared-composable/create-shared-composable';

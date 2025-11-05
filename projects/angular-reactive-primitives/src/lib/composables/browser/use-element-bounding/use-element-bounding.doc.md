@@ -229,3 +229,5 @@ type ElementBounding = {
 - **Responsive layouts**: Adjust layout based on element dimensions
 - **Drag and drop**: Track element bounds during drag operations
 
+
+

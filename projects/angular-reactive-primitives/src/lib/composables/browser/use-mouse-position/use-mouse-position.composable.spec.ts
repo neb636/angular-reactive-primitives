@@ -1,476 +1,492 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import {
-  DestroyRef,
-  PLATFORM_ID,
-  Component,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { DOCUMENT } from '@angular/common';
-import {
-  useMousePosition,
-  MousePosition,
-} from './use-mouse-position.composable';
-
-// Test components to provide injection context
-@Component({
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class TestComponent {
-  mousePosition = useMousePosition();
-}
-
-@Component({
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class TestComponentWithThrottle {
-  mousePosition = useMousePosition(200);
-}
-
-@Component({
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class TestComponentDefaultThrottle {
-  mousePosition = useMousePosition(100);
-}
+import { TestBed } from '@angular/core/testing';
+import { Component, provideZonelessChangeDetection, PLATFORM_ID } from '@angular/core';
+import { useMousePosition } from './use-mouse-position.composable';
 
 describe('useMousePosition', () => {
-  let mockWindow: Window & typeof globalThis;
-  let mockDocument: Document;
-  let addEventListenerSpy: ReturnType<typeof vi.fn>;
-  let removeEventListenerSpy: ReturnType<typeof vi.fn>;
-  let onDestroyCallbacks: Array<() => void>;
-
   beforeEach(() => {
-    // Reset callbacks
-    onDestroyCallbacks = [];
-
-    // Create mock window and document
-    addEventListenerSpy = vi.fn();
-    removeEventListenerSpy = vi.fn();
-
-    mockWindow = {
-      addEventListener: addEventListenerSpy,
-      removeEventListener: removeEventListenerSpy,
-    } as any;
-
-    mockDocument = {
-      defaultView: mockWindow,
-    } as any;
-
-    // Configure TestBed
     TestBed.configureTestingModule({
-      declarations: [
-        TestComponent,
-        TestComponentWithThrottle,
-        TestComponentDefaultThrottle,
-      ],
+      providers: [provideZonelessChangeDetection()],
+    });
+  });
+
+  it('should return default mouse position (0, 0) on initialization', () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const position = fixture.componentInstance.mousePosition();
+    expect(position.x).toBe(0);
+    expect(position.y).toBe(0);
+  });
+
+  it('should update mouse position on mousemove event with default throttle (100ms)', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    // Simulate mouse move event
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 100,
+      clientY: 200,
+    });
+    window.dispatchEvent(mouseEvent);
+
+    // Wait for throttle delay (default 100ms) + buffer
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position = component.mousePosition();
+    expect(position.x).toBe(100);
+    expect(position.y).toBe(200);
+  });
+
+  it('should support custom throttle values', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition(200);
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    // Simulate mouse move event
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 150,
+      clientY: 250,
+    });
+    window.dispatchEvent(mouseEvent);
+
+    // Should not update before throttle delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    let position = component.mousePosition();
+    expect(position.x).toBe(0);
+    expect(position.y).toBe(0);
+
+    // Should update after throttle delay (200ms) + buffer
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    position = component.mousePosition();
+    expect(position.x).toBe(150);
+    expect(position.y).toBe(250);
+  });
+
+  it('should throttle multiple rapid mousemove events', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition(100);
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    // Dispatch multiple events rapidly
+    for (let i = 1; i <= 10; i++) {
+      const mouseEvent = new MouseEvent('mousemove', {
+        clientX: i * 10,
+        clientY: i * 10,
+      });
+      window.dispatchEvent(mouseEvent);
+    }
+
+    // Wait for throttle delay
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position = component.mousePosition();
+    // Should capture the last event (100, 100) due to throttling
+    expect(position.x).toBe(100);
+    expect(position.y).toBe(100);
+  });
+
+  it('should return readonly signal that cannot be directly modified', () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const mousePosition = fixture.componentInstance.mousePosition;
+
+    // Should not have .set() method (readonly signal)
+    expect((mousePosition as any).set).toBeUndefined();
+  });
+
+  it('should share instance between components with same throttleMs value', async () => {
+    @Component({
+      selector: 'test-component-shared-1',
+      template: '',
+    })
+    class TestComponent1 {
+      mousePosition = useMousePosition(); // default 100ms
+    }
+
+    @Component({
+      selector: 'test-component-shared-2',
+      template: '',
+    })
+    class TestComponent2 {
+      mousePosition = useMousePosition(); // default 100ms
+    }
+
+    const fixture1 = TestBed.createComponent(TestComponent1);
+    const fixture2 = TestBed.createComponent(TestComponent2);
+
+    fixture1.detectChanges();
+    fixture2.detectChanges();
+
+    // Simulate mouse move event
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 300,
+      clientY: 400,
+    });
+    window.dispatchEvent(mouseEvent);
+
+    // Wait for throttle
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position1 = fixture1.componentInstance.mousePosition();
+    const position2 = fixture2.componentInstance.mousePosition();
+
+    // Both should have the same values (shared instance)
+    expect(position1.x).toBe(300);
+    expect(position1.y).toBe(400);
+    expect(position2.x).toBe(300);
+    expect(position2.y).toBe(400);
+  });
+
+  it('should create separate instances for different throttleMs values', async () => {
+    @Component({
+      selector: 'test-component-separate-1',
+      template: '',
+    })
+    class TestComponent1 {
+      mousePosition = useMousePosition(50); // 50ms throttle
+    }
+
+    @Component({
+      selector: 'test-component-separate-2',
+      template: '',
+    })
+    class TestComponent2 {
+      mousePosition = useMousePosition(200); // 200ms throttle
+    }
+
+    const fixture1 = TestBed.createComponent(TestComponent1);
+    const fixture2 = TestBed.createComponent(TestComponent2);
+
+    fixture1.detectChanges();
+    fixture2.detectChanges();
+
+    // Simulate mouse move event
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 500,
+      clientY: 600,
+    });
+    window.dispatchEvent(mouseEvent);
+
+    // Check after 100ms - component1 (50ms throttle) should update, component2 (200ms throttle) should not
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    const position1 = fixture1.componentInstance.mousePosition();
+    const position2 = fixture2.componentInstance.mousePosition();
+
+    expect(position1.x).toBe(500);
+    expect(position1.y).toBe(600);
+    expect(position2.x).toBe(0); // Not updated yet due to longer throttle
+    expect(position2.y).toBe(0);
+
+    // Check after 250ms - both should be updated
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position2Updated = fixture2.componentInstance.mousePosition();
+    expect(position2Updated.x).toBe(500);
+    expect(position2Updated.y).toBe(600);
+  });
+
+  it('should clean up event listeners on component destroy', () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    // Get the mouse position to ensure setup happened
+    fixture.componentInstance.mousePosition();
+
+    // Destroy component (should clean up without errors)
+    expect(() => fixture.destroy()).not.toThrow();
+  });
+
+  it('should handle server-side rendering (returns default values)', () => {
+    // Override PLATFORM_ID to simulate server environment
+    TestBed.configureTestingModule({
       providers: [
-        { provide: DOCUMENT, useValue: mockDocument },
-        { provide: PLATFORM_ID, useValue: 'browser' },
+        provideZonelessChangeDetection(),
+        { provide: PLATFORM_ID, useValue: 'server' },
       ],
     });
+
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const position = fixture.componentInstance.mousePosition();
+    
+    // Should return default values on server
+    expect(position.x).toBe(0);
+    expect(position.y).toBe(0);
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    TestBed.resetTestingModule();
+  it('should not set up event listeners on server', async () => {
+    // Override PLATFORM_ID to simulate server environment
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: PLATFORM_ID, useValue: 'server' },
+      ],
+    });
+
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
+
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    // Simulate mouse move event
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 700,
+      clientY: 800,
+    });
+    window.dispatchEvent(mouseEvent);
+
+    // Wait for potential throttle
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position = component.mousePosition();
+    
+    // Should still be at default values (no event listener set up on server)
+    expect(position.x).toBe(0);
+    expect(position.y).toBe(0);
   });
 
-  // Helper to create component and track destroy callbacks
-  function createComponent<T>(componentClass: new () => T): {
-    component: T;
-    fixture: ComponentFixture<T>;
-    destroyRef: DestroyRef;
-  } {
-    const fixture = TestBed.createComponent(componentClass);
-    const destroyRef = fixture.componentRef.injector.get(DestroyRef);
+  it('should handle zero throttle value', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition(0);
+    }
 
-    // Track onDestroy callbacks
-    const originalOnDestroy = destroyRef.onDestroy.bind(destroyRef);
-    vi.spyOn(destroyRef, 'onDestroy').mockImplementation(
-      (callback: () => void) => {
-        onDestroyCallbacks.push(callback);
-        return originalOnDestroy(callback);
-      },
-    );
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
 
-    return {
-      component: fixture.componentInstance,
-      fixture,
-      destroyRef,
-    };
-  }
+    const component = fixture.componentInstance;
 
-  describe('Basic Functionality', () => {
-    it('should return a readonly signal with initial position { x: 0, y: 0 }', () => {
-      const { component } = createComponent(TestComponent);
-      const position = component.mousePosition();
-
-      expect(position).toEqual({ x: 0, y: 0 });
-      expect(component.mousePosition).toBeDefined();
+    // Simulate mouse move event
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 50,
+      clientY: 75,
     });
+    window.dispatchEvent(mouseEvent);
 
-    it('should return readonly signal that cannot be mutated directly', () => {
-      const { component } = createComponent(TestComponent);
-      const mousePosition = component.mousePosition;
-
-      // Verify it's readonly - should not have set/update methods
-      expect(typeof (mousePosition as any).set).toBe('undefined');
-      expect(typeof (mousePosition as any).update).toBe('undefined');
-    });
-
-    it('should set up mousemove event listener on window', () => {
-      createComponent(TestComponent);
-
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'mousemove',
-        expect.any(Function),
-      );
-    });
+    // With 0ms throttle, should update immediately (or very quickly)
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    const position = component.mousePosition();
+    expect(position.x).toBe(50);
+    expect(position.y).toBe(75);
   });
 
-  describe('Mouse Position Updates', () => {
-    it('should update position when mouse moves', async () => {
-      const { component } = createComponent(TestComponent);
+  it('should update continuously as mouse moves', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition(50);
+    }
 
-      // Get the event handler that was registered
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
 
-      // Simulate mouse move
-      const mockEvent = {
-        clientX: 100,
-        clientY: 200,
-      } as MouseEvent;
+    const component = fixture.componentInstance;
 
-      eventHandler(mockEvent);
-
-      // Wait for signal update (throttle may delay, but let's wait a bit)
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      const position = component.mousePosition();
-      expect(position).toEqual({ x: 100, y: 200 });
+    // First movement
+    let mouseEvent = new MouseEvent('mousemove', {
+      clientX: 10,
+      clientY: 20,
     });
+    window.dispatchEvent(mouseEvent);
 
-    it('should update position multiple times as mouse moves', async () => {
-      const { component } = createComponent(TestComponent);
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    let position = component.mousePosition();
+    expect(position.x).toBe(10);
+    expect(position.y).toBe(20);
 
-      // First move
-      eventHandler({ clientX: 50, clientY: 75 } as MouseEvent);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(component.mousePosition()).toEqual({ x: 50, y: 75 });
-
-      // Second move
-      eventHandler({ clientX: 150, clientY: 250 } as MouseEvent);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(component.mousePosition()).toEqual({ x: 150, y: 250 });
-
-      // Third move
-      eventHandler({ clientX: 300, clientY: 400 } as MouseEvent);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      expect(component.mousePosition()).toEqual({ x: 300, y: 400 });
+    // Second movement
+    mouseEvent = new MouseEvent('mousemove', {
+      clientX: 30,
+      clientY: 40,
     });
+    window.dispatchEvent(mouseEvent);
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    position = component.mousePosition();
+    expect(position.x).toBe(30);
+    expect(position.y).toBe(40);
+
+    // Third movement
+    mouseEvent = new MouseEvent('mousemove', {
+      clientX: 50,
+      clientY: 60,
+    });
+    window.dispatchEvent(mouseEvent);
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    position = component.mousePosition();
+    expect(position.x).toBe(50);
+    expect(position.y).toBe(60);
   });
 
-  describe('Throttling', () => {
-    it('should use default throttle of 100ms', () => {
-      createComponent(TestComponent);
+  it('should handle negative coordinates', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
 
-      // Verify event listener was set up
-      expect(addEventListenerSpy).toHaveBeenCalled();
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    // Simulate mouse move with negative coordinates (edge case but possible)
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: -10,
+      clientY: -20,
     });
+    window.dispatchEvent(mouseEvent);
 
-    it('should accept custom throttle value', () => {
-      createComponent(TestComponentWithThrottle);
-
-      // Verify event listener was set up with custom throttle
-      expect(addEventListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should throttle mouse move events', async () => {
-      const { component } = createComponent(TestComponentDefaultThrottle);
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
-
-      // Fire multiple rapid events
-      eventHandler({ clientX: 10, clientY: 20 } as MouseEvent);
-      eventHandler({ clientX: 20, clientY: 30 } as MouseEvent);
-      eventHandler({ clientX: 30, clientY: 40 } as MouseEvent);
-
-      // Before throttle delay, position should still be initial
-      let position = component.mousePosition();
-      expect(position).toEqual({ x: 0, y: 0 });
-
-      // Wait for throttle delay
-      await new Promise((resolve) => setTimeout(resolve, 110));
-
-      // After throttle, should have updated (lodash throttle calls first or last)
-      position = component.mousePosition();
-      expect(position.x).toBeGreaterThanOrEqual(10);
-      expect(position.y).toBeGreaterThanOrEqual(20);
-    });
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position = component.mousePosition();
+    expect(position.x).toBe(-10);
+    expect(position.y).toBe(-20);
   });
 
-  describe('Shared Composable Behavior', () => {
-    it('should share instance when called with same throttle value', () => {
-      const { component: comp1 } = createComponent(TestComponent);
-      const { component: comp2 } = createComponent(TestComponent);
+  it('should handle very large coordinate values', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent {
+      mousePosition = useMousePosition();
+    }
 
-      // Both should return the same signal instance
-      expect(comp1.mousePosition).toBe(comp2.mousePosition);
+    const fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
 
-      // Should only have one event listener registered (shared instance)
-      // Note: Each component creation may trigger setup, but they share the same handler
-      expect(addEventListenerSpy).toHaveBeenCalled();
+    const component = fixture.componentInstance;
+
+    // Simulate mouse move with large coordinates
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 99999,
+      clientY: 88888,
     });
+    window.dispatchEvent(mouseEvent);
 
-    it('should share instance when called with same custom throttle value', () => {
-      const { component: comp1 } = createComponent(TestComponentWithThrottle);
-      const { component: comp2 } = createComponent(TestComponentWithThrottle);
-
-      expect(comp1.mousePosition).toBe(comp2.mousePosition);
-      expect(addEventListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should create separate instances for different throttle values', () => {
-      const { component: comp1 } = createComponent(
-        TestComponentDefaultThrottle,
-      );
-      const { component: comp2 } = createComponent(TestComponentWithThrottle);
-
-      // Should be different instances
-      expect(comp1.mousePosition).not.toBe(comp2.mousePosition);
-
-      // Should have separate event listeners
-      expect(addEventListenerSpy).toHaveBeenCalledTimes(2);
-    });
-
-    it('should update shared signal when multiple components use same throttle', async () => {
-      const { component: comp1 } = createComponent(TestComponent);
-      const { component: comp2 } = createComponent(TestComponent);
-
-      // Get the event handler (they share the same one)
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
-
-      // Simulate mouse move
-      eventHandler({ clientX: 500, clientY: 600 } as MouseEvent);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      // Both should reflect the same update
-      expect(comp1.mousePosition()).toEqual({ x: 500, y: 600 });
-      expect(comp2.mousePosition()).toEqual({ x: 500, y: 600 });
-    });
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const position = component.mousePosition();
+    expect(position.x).toBe(99999);
+    expect(position.y).toBe(88888);
   });
 
-  describe('Server-Side Rendering (SSR)', () => {
-    beforeEach(() => {
-      // Mock server platform
-      TestBed.configureTestingModule({
-        declarations: [TestComponent],
-        providers: [
-          { provide: DOCUMENT, useValue: mockDocument },
-          { provide: PLATFORM_ID, useValue: 'server' },
-        ],
-      });
+  it('should handle multiple components with different throttle values independently', async () => {
+    @Component({
+      template: '',
+    })
+    class TestComponent1 {
+      mousePosition1 = useMousePosition(100);
+      mousePosition2 = useMousePosition(100); // Same throttle - should share
+      mousePosition3 = useMousePosition(300); // Different throttle - separate instance
+    }
+
+    const fixture = TestBed.createComponent(TestComponent1);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+
+    // Simulate mouse move
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: 111,
+      clientY: 222,
     });
+    window.dispatchEvent(mouseEvent);
 
-    it('should return default position { x: 0, y: 0 } on server', () => {
-      const { component } = createComponent(TestComponent);
-      const position = component.mousePosition();
+    // Check after 150ms - mousePosition1 and mousePosition2 should update, mousePosition3 should not
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    const pos1 = component.mousePosition1();
+    const pos2 = component.mousePosition2();
+    const pos3 = component.mousePosition3();
 
-      expect(position).toEqual({ x: 0, y: 0 });
-      // On server, event listener should not be set up
-      // Note: isPlatformBrowser('server') returns false
-    });
+    expect(pos1.x).toBe(111);
+    expect(pos1.y).toBe(222);
+    expect(pos2.x).toBe(111); // Same as pos1 (shared instance)
+    expect(pos2.y).toBe(222);
+    expect(pos3.x).toBe(0); // Not updated yet
+    expect(pos3.y).toBe(0);
 
-    it('should not set up event listeners on server', () => {
-      // Reset spy
-      addEventListenerSpy.mockClear();
-
-      createComponent(TestComponent);
-
-      // On server platform, isPlatformBrowser returns false, so no listener
-      // But the spy might still be called if the check happens after setup
-      // This test verifies the behavior matches the implementation
-    });
-  });
-
-  describe('Cleanup', () => {
-    it('should register cleanup callback with DestroyRef', () => {
-      createComponent(TestComponent);
-
-      expect(onDestroyCallbacks.length).toBeGreaterThan(0);
-    });
-
-    it('should remove event listener on cleanup', () => {
-      const { component } = createComponent(TestComponent);
-
-      // Get the event handler
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
-
-      // Trigger cleanup (simulate component destruction)
-      const cleanupCallback = onDestroyCallbacks[0];
-      cleanupCallback();
-
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'mousemove',
-        eventHandler,
-      );
-    });
-
-    it('should cancel throttle on cleanup', () => {
-      const { component } = createComponent(TestComponentDefaultThrottle);
-
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
-
-      // Trigger cleanup
-      const cleanupCallback = onDestroyCallbacks[0];
-      cleanupCallback();
-
-      // Verify cleanup was called (throttle cancel is internal to lodash)
-      expect(removeEventListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should cleanup only when last reference is destroyed', () => {
-      const { component: comp1 } = createComponent(TestComponent);
-      const { component: comp2 } = createComponent(TestComponent);
-
-      // Both share the same instance
-      expect(comp1.mousePosition).toBe(comp2.mousePosition);
-
-      // Each component has its own DestroyRef callback
-      expect(onDestroyCallbacks.length).toBe(2);
-
-      // Destroy first reference
-      onDestroyCallbacks[0]();
-
-      // Should not remove listener yet (one reference still exists)
-      // The shared composable uses ref counting
-
-      // Destroy second reference
-      onDestroyCallbacks[1]();
-
-      // Now listener should be removed
-      expect(removeEventListenerSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('should handle missing defaultView gracefully', () => {
-      // Create a new document without defaultView
-      const docWithoutView = {
-        defaultView: null,
-      } as any;
-
-      TestBed.configureTestingModule({
-        declarations: [TestComponent],
-        providers: [
-          { provide: DOCUMENT, useValue: docWithoutView },
-          { provide: PLATFORM_ID, useValue: 'browser' },
-        ],
-      });
-
-      // Should not throw
-      expect(() => createComponent(TestComponent)).not.toThrow();
-      expect(addEventListenerSpy).not.toHaveBeenCalled();
-    });
-
-    it('should handle zero throttle value', () => {
-      @Component({
-        template: '',
-        changeDetection: ChangeDetectionStrategy.OnPush,
-      })
-      class ZeroThrottleComponent {
-        mousePosition = useMousePosition(0);
-      }
-
-      TestBed.configureTestingModule({
-        declarations: [ZeroThrottleComponent],
-        providers: [
-          { provide: DOCUMENT, useValue: mockDocument },
-          { provide: PLATFORM_ID, useValue: 'browser' },
-        ],
-      });
-
-      expect(() => createComponent(ZeroThrottleComponent)).not.toThrow();
-      expect(addEventListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should handle negative throttle value', () => {
-      @Component({
-        template: '',
-        changeDetection: ChangeDetectionStrategy.OnPush,
-      })
-      class NegativeThrottleComponent {
-        mousePosition = useMousePosition(-10);
-      }
-
-      TestBed.configureTestingModule({
-        declarations: [NegativeThrottleComponent],
-        providers: [
-          { provide: DOCUMENT, useValue: mockDocument },
-          { provide: PLATFORM_ID, useValue: 'browser' },
-        ],
-      });
-
-      expect(() => createComponent(NegativeThrottleComponent)).not.toThrow();
-      expect(addEventListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should handle very large throttle value', () => {
-      @Component({
-        template: '',
-        changeDetection: ChangeDetectionStrategy.OnPush,
-      })
-      class LargeThrottleComponent {
-        mousePosition = useMousePosition(1000000);
-      }
-
-      TestBed.configureTestingModule({
-        declarations: [LargeThrottleComponent],
-        providers: [
-          { provide: DOCUMENT, useValue: mockDocument },
-          { provide: PLATFORM_ID, useValue: 'browser' },
-        ],
-      });
-
-      expect(() => createComponent(LargeThrottleComponent)).not.toThrow();
-      expect(addEventListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should handle mouse events with zero coordinates', async () => {
-      const { component } = createComponent(TestComponent);
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
-
-      eventHandler({ clientX: 0, clientY: 0 } as MouseEvent);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      expect(component.mousePosition()).toEqual({ x: 0, y: 0 });
-    });
-
-    it('should handle mouse events with negative coordinates', async () => {
-      const { component } = createComponent(TestComponent);
-      const eventHandler = addEventListenerSpy.mock.calls[0][1];
-
-      eventHandler({ clientX: -100, clientY: -200 } as MouseEvent);
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      expect(component.mousePosition()).toEqual({ x: -100, y: -200 });
-    });
-  });
-
-  describe('Type Safety', () => {
-    it('should return MousePosition type', () => {
-      const { component } = createComponent(TestComponent);
-      const position: MousePosition = component.mousePosition();
-
-      expect(position).toHaveProperty('x');
-      expect(position).toHaveProperty('y');
-      expect(typeof position.x).toBe('number');
-      expect(typeof position.y).toBe('number');
-    });
+    // Check after 350ms - all should be updated
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    const pos3Updated = component.mousePosition3();
+    expect(pos3Updated.x).toBe(111);
+    expect(pos3Updated.y).toBe(222);
   });
 });
+

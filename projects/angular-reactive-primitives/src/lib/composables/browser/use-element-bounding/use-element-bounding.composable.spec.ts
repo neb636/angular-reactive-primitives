@@ -1,10 +1,53 @@
 import { TestBed } from '@angular/core/testing';
-import { Component, signal, ElementRef, viewChild } from '@angular/core';
+import { Component, signal, ElementRef, viewChild, provideZonelessChangeDetection } from '@angular/core';
 import { useElementBounding } from './use-element-bounding.composable';
 
+// Helper to mock getBoundingClientRect on an element
+function mockElementBounds(element: HTMLElement, bounds: {
+  width: number;
+  height: number;
+  x?: number;
+  y?: number;
+  top?: number;
+  left?: number;
+  right?: number;
+  bottom?: number;
+}) {
+  const x = bounds.x ?? bounds.left ?? 0;
+  const y = bounds.y ?? bounds.top ?? 0;
+  const top = bounds.top ?? bounds.y ?? 0;
+  const left = bounds.left ?? bounds.x ?? 0;
+  const right = bounds.right ?? (left + bounds.width);
+  const bottom = bounds.bottom ?? (top + bounds.height);
+
+  element.getBoundingClientRect = () => ({
+    width: bounds.width,
+    height: bounds.height,
+    x,
+    y,
+    top,
+    right,
+    bottom,
+    left,
+    toJSON: () => {},
+  });
+}
+
 describe('useElementBounding', () => {
+  let originalGetBoundingClientRect: typeof Element.prototype.getBoundingClientRect;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
+    
+    // Save original method
+    originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
+  });
+
+  afterEach(() => {
+    // Restore original method
+    Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
   });
 
   it('should return default values when element is null', () => {
@@ -31,6 +74,26 @@ describe('useElementBounding', () => {
   });
 
   it('should track element bounding box', () => {
+    // Mock at prototype level before component creation
+    Element.prototype.getBoundingClientRect = function() {
+      // Check if this element has inline styles to determine which mock to return
+      const style = (this as HTMLElement).getAttribute('style') || '';
+      if (style.includes('width: 100px')) {
+        return {
+          width: 100,
+          height: 50,
+          x: 10,
+          y: 20,
+          top: 20,
+          right: 110,
+          bottom: 70,
+          left: 10,
+          toJSON: () => {},
+        } as DOMRect;
+      }
+      return { width: 0, height: 0, x: 0, y: 0, top: 0, right: 0, bottom: 0, left: 0, toJSON: () => {} } as DOMRect;
+    };
+
     @Component({
       template: '<div #myDiv style="width: 100px; height: 50px;"></div>',
     })
@@ -61,6 +124,7 @@ describe('useElementBounding', () => {
       ngAfterViewInit() {
         const element = this.divRef()?.nativeElement;
         if (element) {
+          mockElementBounds(element, { width: 200, height: 100, x: 15, y: 25 });
           this.elementSignal.set(element);
         }
       }
@@ -74,7 +138,7 @@ describe('useElementBounding', () => {
     expect(bounding.height).toBe(100);
   });
 
-  it('should update when element changes', (done) => {
+  it('should update when element changes', async () => {
     @Component({
       template: `
         <div #div1 style="width: 100px; height: 50px;"></div>
@@ -97,25 +161,24 @@ describe('useElementBounding', () => {
     component.elementSignal.set(component.div1Ref()!);
     fixture.detectChanges();
 
-    setTimeout(() => {
-      let bounding = component.bounding();
-      expect(bounding.width).toBe(100);
-      expect(bounding.height).toBe(50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    let bounding = component.bounding();
+    expect(bounding.width).toBe(100);
+    expect(bounding.height).toBe(50);
 
-      // Change to second element
-      component.elementSignal.set(component.div2Ref()!);
-      fixture.detectChanges();
+    // Change to second element
+    component.elementSignal.set(component.div2Ref()!);
+    fixture.detectChanges();
 
-      setTimeout(() => {
-        bounding = component.bounding();
-        expect(bounding.width).toBe(200);
-        expect(bounding.height).toBe(100);
-        done();
-      }, 50);
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(200);
+    expect(bounding.height).toBe(100);
   });
 
-  it('should handle element becoming null', (done) => {
+  it('should handle element becoming null', async () => {
     @Component({
       template: '<div #myDiv style="width: 100px; height: 50px;"></div>',
     })
@@ -134,21 +197,20 @@ describe('useElementBounding', () => {
     component.elementSignal.set(component.divRef()!);
     fixture.detectChanges();
 
-    setTimeout(() => {
-      let bounding = component.bounding();
-      expect(bounding.width).toBe(100);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    let bounding = component.bounding();
+    expect(bounding.width).toBe(100);
 
-      // Set to null
-      component.elementSignal.set(null);
-      fixture.detectChanges();
+    // Set to null
+    component.elementSignal.set(null);
+    fixture.detectChanges();
 
-      setTimeout(() => {
-        bounding = component.bounding();
-        expect(bounding.width).toBe(0);
-        expect(bounding.height).toBe(0);
-        done();
-      }, 50);
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(0);
+    expect(bounding.height).toBe(0);
   });
 
   it('should provide an update method', () => {
@@ -170,7 +232,28 @@ describe('useElementBounding', () => {
     bounding.update();
   });
 
-  it('should manually update bounding when update() is called', (done) => {
+  it('should manually update bounding when update() is called', async () => {
+    let mockWidth = 100;
+    
+    // Mock at prototype level
+    Element.prototype.getBoundingClientRect = function() {
+      const style = (this as HTMLElement).getAttribute('style') || '';
+      if (style.includes('width: 100px')) {
+        return {
+          width: mockWidth,
+          height: 50,
+          x: 10,
+          y: 20,
+          top: 20,
+          right: 10 + mockWidth,
+          bottom: 70,
+          left: 10,
+          toJSON: () => {},
+        } as DOMRect;
+      }
+      return { width: 0, height: 0, x: 0, y: 0, top: 0, right: 0, bottom: 0, left: 0, toJSON: () => {} } as DOMRect;
+    };
+
     @Component({
       template: '<div #myDiv style="width: 100px; height: 50px;"></div>',
     })
@@ -186,30 +269,27 @@ describe('useElementBounding', () => {
     fixture.detectChanges();
 
     const component = fixture.componentInstance;
-    const element = component.divRef()!.nativeElement;
 
     // Initial values
     let bounding = component.bounding();
-    const initialWidth = bounding.width;
-    expect(initialWidth).toBe(100);
+    expect(bounding.width).toBe(100);
 
-    // Change element size
-    element.style.width = '300px';
+    // Change mock width
+    mockWidth = 300;
 
     // Size shouldn't update automatically (listeners disabled)
-    setTimeout(() => {
-      bounding = component.bounding();
-      expect(bounding.width).toBe(100); // Still old value
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(100); // Still old value
 
-      // Manual update
-      bounding.update();
+    // Manual update
+    bounding.update();
 
-      setTimeout(() => {
-        bounding = component.bounding();
-        expect(bounding.width).toBe(300); // Updated!
-        done();
-      }, 50);
-    }, 50);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    bounding = component.bounding();
+    expect(bounding.width).toBe(300); // Updated!
   });
 
   it('should respect custom throttle configuration', () => {
@@ -262,6 +342,37 @@ describe('useElementBounding', () => {
   });
 
   it('should handle multiple components using the composable independently', () => {
+    // Mock at prototype level to handle multiple elements
+    Element.prototype.getBoundingClientRect = function() {
+      const style = (this as HTMLElement).getAttribute('style') || '';
+      if (style.includes('width: 100px')) {
+        return {
+          width: 100,
+          height: 50,
+          x: 10,
+          y: 20,
+          top: 20,
+          right: 110,
+          bottom: 70,
+          left: 10,
+          toJSON: () => {},
+        } as DOMRect;
+      } else if (style.includes('width: 200px')) {
+        return {
+          width: 200,
+          height: 100,
+          x: 15,
+          y: 25,
+          top: 25,
+          right: 215,
+          bottom: 125,
+          left: 15,
+          toJSON: () => {},
+        } as DOMRect;
+      }
+      return { width: 0, height: 0, x: 0, y: 0, top: 0, right: 0, bottom: 0, left: 0, toJSON: () => {} } as DOMRect;
+    };
+
     @Component({
       template: '<div #myDiv style="width: 100px; height: 50px;"></div>',
     })
