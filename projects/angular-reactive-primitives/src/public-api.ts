@@ -12,6 +12,7 @@ export * from './lib/composables/route/use-route-fragment/use-route-fragment.com
 
 // Browser Composables
 export * from './lib/composables/browser/use-document-visibility/use-document-visibility.composable';
+export * from './lib/composables/browser/use-element-bounding/use-element-bounding.composable';
 export * from './lib/composables/browser/use-window-size/use-window-size.composable';
 export * from './lib/composables/browser/use-mouse-position/use-mouse-position.composable';
 
