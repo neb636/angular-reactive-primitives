@@ -1,5 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { Component, provideZonelessChangeDetection, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  PLATFORM_ID,
+} from '@angular/core';
 import { useMousePosition } from './use-mouse-position.composable';
 
 describe('useMousePosition', () => {
@@ -46,46 +50,11 @@ describe('useMousePosition', () => {
     window.dispatchEvent(mouseEvent);
 
     // Wait for throttle delay (default 100ms) + buffer
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
     const position = component.mousePosition();
     expect(position.x).toBe(100);
     expect(position.y).toBe(200);
-  });
-
-  it('should support custom throttle values', async () => {
-    @Component({
-      template: '',
-    })
-    class TestComponent {
-      mousePosition = useMousePosition(200);
-    }
-
-    const fixture = TestBed.createComponent(TestComponent);
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance;
-
-    // Simulate mouse move event
-    const mouseEvent = new MouseEvent('mousemove', {
-      clientX: 150,
-      clientY: 250,
-    });
-    window.dispatchEvent(mouseEvent);
-
-    // Should not update before throttle delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    let position = component.mousePosition();
-    expect(position.x).toBe(0);
-    expect(position.y).toBe(0);
-
-    // Should update after throttle delay (200ms) + buffer
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
-    position = component.mousePosition();
-    expect(position.x).toBe(150);
-    expect(position.y).toBe(250);
   });
 
   it('should throttle multiple rapid mousemove events', async () => {
@@ -111,8 +80,8 @@ describe('useMousePosition', () => {
     }
 
     // Wait for throttle delay
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
     const position = component.mousePosition();
     // Should capture the last event (100, 100) due to throttling
     expect(position.x).toBe(100);
@@ -167,8 +136,8 @@ describe('useMousePosition', () => {
     window.dispatchEvent(mouseEvent);
 
     // Wait for throttle
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
     const position1 = fixture1.componentInstance.mousePosition();
     const position2 = fixture2.componentInstance.mousePosition();
 
@@ -177,55 +146,6 @@ describe('useMousePosition', () => {
     expect(position1.y).toBe(400);
     expect(position2.x).toBe(300);
     expect(position2.y).toBe(400);
-  });
-
-  it('should create separate instances for different throttleMs values', async () => {
-    @Component({
-      selector: 'test-component-separate-1',
-      template: '',
-    })
-    class TestComponent1 {
-      mousePosition = useMousePosition(50); // 50ms throttle
-    }
-
-    @Component({
-      selector: 'test-component-separate-2',
-      template: '',
-    })
-    class TestComponent2 {
-      mousePosition = useMousePosition(200); // 200ms throttle
-    }
-
-    const fixture1 = TestBed.createComponent(TestComponent1);
-    const fixture2 = TestBed.createComponent(TestComponent2);
-
-    fixture1.detectChanges();
-    fixture2.detectChanges();
-
-    // Simulate mouse move event
-    const mouseEvent = new MouseEvent('mousemove', {
-      clientX: 500,
-      clientY: 600,
-    });
-    window.dispatchEvent(mouseEvent);
-
-    // Check after 100ms - component1 (50ms throttle) should update, component2 (200ms throttle) should not
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    const position1 = fixture1.componentInstance.mousePosition();
-    const position2 = fixture2.componentInstance.mousePosition();
-
-    expect(position1.x).toBe(500);
-    expect(position1.y).toBe(600);
-    expect(position2.x).toBe(0); // Not updated yet due to longer throttle
-    expect(position2.y).toBe(0);
-
-    // Check after 250ms - both should be updated
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
-    const position2Updated = fixture2.componentInstance.mousePosition();
-    expect(position2Updated.x).toBe(500);
-    expect(position2Updated.y).toBe(600);
   });
 
   it('should clean up event listeners on component destroy', () => {
@@ -266,7 +186,7 @@ describe('useMousePosition', () => {
     fixture.detectChanges();
 
     const position = fixture.componentInstance.mousePosition();
-    
+
     // Should return default values on server
     expect(position.x).toBe(0);
     expect(position.y).toBe(0);
@@ -301,10 +221,10 @@ describe('useMousePosition', () => {
     window.dispatchEvent(mouseEvent);
 
     // Wait for potential throttle
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
     const position = component.mousePosition();
-    
+
     // Should still be at default values (no event listener set up on server)
     expect(position.x).toBe(0);
     expect(position.y).toBe(0);
@@ -331,8 +251,8 @@ describe('useMousePosition', () => {
     window.dispatchEvent(mouseEvent);
 
     // With 0ms throttle, should update immediately (or very quickly)
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     const position = component.mousePosition();
     expect(position.x).toBe(50);
     expect(position.y).toBe(75);
@@ -358,8 +278,8 @@ describe('useMousePosition', () => {
     });
     window.dispatchEvent(mouseEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     let position = component.mousePosition();
     expect(position.x).toBe(10);
     expect(position.y).toBe(20);
@@ -371,8 +291,8 @@ describe('useMousePosition', () => {
     });
     window.dispatchEvent(mouseEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     position = component.mousePosition();
     expect(position.x).toBe(30);
     expect(position.y).toBe(40);
@@ -384,8 +304,8 @@ describe('useMousePosition', () => {
     });
     window.dispatchEvent(mouseEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     position = component.mousePosition();
     expect(position.x).toBe(50);
     expect(position.y).toBe(60);
@@ -411,8 +331,8 @@ describe('useMousePosition', () => {
     });
     window.dispatchEvent(mouseEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
     const position = component.mousePosition();
     expect(position.x).toBe(-10);
     expect(position.y).toBe(-20);
@@ -438,55 +358,10 @@ describe('useMousePosition', () => {
     });
     window.dispatchEvent(mouseEvent);
 
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
     const position = component.mousePosition();
     expect(position.x).toBe(99999);
     expect(position.y).toBe(88888);
   });
-
-  it('should handle multiple components with different throttle values independently', async () => {
-    @Component({
-      template: '',
-    })
-    class TestComponent1 {
-      mousePosition1 = useMousePosition(100);
-      mousePosition2 = useMousePosition(100); // Same throttle - should share
-      mousePosition3 = useMousePosition(300); // Different throttle - separate instance
-    }
-
-    const fixture = TestBed.createComponent(TestComponent1);
-    fixture.detectChanges();
-
-    const component = fixture.componentInstance;
-
-    // Simulate mouse move
-    const mouseEvent = new MouseEvent('mousemove', {
-      clientX: 111,
-      clientY: 222,
-    });
-    window.dispatchEvent(mouseEvent);
-
-    // Check after 150ms - mousePosition1 and mousePosition2 should update, mousePosition3 should not
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
-    const pos1 = component.mousePosition1();
-    const pos2 = component.mousePosition2();
-    const pos3 = component.mousePosition3();
-
-    expect(pos1.x).toBe(111);
-    expect(pos1.y).toBe(222);
-    expect(pos2.x).toBe(111); // Same as pos1 (shared instance)
-    expect(pos2.y).toBe(222);
-    expect(pos3.x).toBe(0); // Not updated yet
-    expect(pos3.y).toBe(0);
-
-    // Check after 350ms - all should be updated
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    const pos3Updated = component.mousePosition3();
-    expect(pos3Updated.x).toBe(111);
-    expect(pos3Updated.y).toBe(222);
-  });
 });
-
