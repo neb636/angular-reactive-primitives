@@ -1,6 +1,24 @@
 {
   "name": "angular-reactive-primitives",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "description": "A collection of small, reusable reactive building blocks for modern Angular applications",
+  "author": "neb636",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neb636/angular-reactive-primitives"
+  },
+  "homepage": "https://github.com/neb636/angular-reactive-primitives",
+  "keywords": [
+    "angular",
+    "reactive",
+    "primitives",
+    "composables",
+    "effects"
+  ],
+  "engines": {
+    "node": ">=22.20.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve documentation-site",
