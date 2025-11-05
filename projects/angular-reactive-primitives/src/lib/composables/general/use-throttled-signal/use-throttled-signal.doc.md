@@ -1,6 +1,6 @@
 # useThrottledSignal
 
-Creates a throttled signal from a source signal. Unlike debounce, throttle emits the first value immediately and then waits for the throttle period before emitting subsequent values.
+Creates a throttled signal from a source signal. The initial value is set immediately when created, then subsequent updates are throttled to emit at most once per throttle period. Unlike debounce which waits for a "quiet period", throttle ensures updates happen at regular intervals during continuous activity.
 
 ## Usage
 
@@ -47,6 +47,9 @@ class ExampleComponent {
 ## Notes
 
 - The throttled signal is **readonly** to prevent direct manipulation
-- Emits the first value immediately, then throttles subsequent updates
+- The initial value from the source signal is set immediately upon creation
+- All updates after initialization are throttled - the throttle period begins when the composable is created
+- Updates are emitted at most once per throttle period, ensuring regular intervals during continuous activity
+- The last value during a burst of updates will be emitted after the throttle period expires
 - Uses lodash's `throttle` implementation for reliable behavior
 - Consider using `useDebouncedSignal` for events like search input where you want to wait for user to stop typing

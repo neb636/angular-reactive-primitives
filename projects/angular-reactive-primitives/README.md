@@ -6,7 +6,7 @@ A collection of small, reusable reactive building blocks for modern Angular (v20
 
 - 🌳 **Fully tree-shakeable** - Only import what you need
 - 💪 **Strongly typed** - Full TypeScript support
-- 🎯 **Signal-first** - Built on Angular's reactive primitives\
+- 🎯 **Signal-first** - Built on Angular's reactive primitives
 - 🔧 **Composable** - Mix and match to build complex behaviors
 
 ## Installation
